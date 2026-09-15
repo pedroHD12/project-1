@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${message.status == 'DRAFT' ? 'Revisar envio · MailFlow' : 'Acompanhar envio · MailFlow'}"></title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar"><aside th:replace="~{fragments/navigation :: sidebar('send')}"></aside>
+<main id="main-content" class="page-container narrow delivery-page">
+    <a class="text-link" th:href="@{/history}">Histórico e rascunhos</a>
+    <div class="page-heading"><div><h1 th:text="${message.status == 'DRAFT' ? 'Revise antes de enviar' : 'Acompanhar envio'}"></h1><p class="subtitle" th:text="${message.label()}"></p></div></div>
+    <div th:if="${success}" class="flash success" role="status" th:text="${success}"></div><div th:if="${error}" class="flash error" role="alert" th:text="${error}"></div>
+    <p th:if="${message.testOf != null}" class="flash">Este é um teste para o e-mail da sua conta. <a th:href="@{/messages/{id}(id=${message.testOf})}">Voltar ao envio original</a></p>
+    <dl class="delivery-facts"><div><dt>De</dt><dd th:text="${message.from}"></dd></div><div><dt>Destinatários</dt><dd th:text="${detail.recipients.size() + ' pessoa(s), em mensagens separadas'}"></dd></div><div><dt>Quando</dt><dd th:text="${message.mode == 'NOW' ? 'Agora, após confirmar' : message.plannedLabel()}"></dd></div><div th:if="${message.occurrences > 1}"><dt>Repetição</dt><dd th:text="${message.occurrences + (message.mode == 'DAILY' ? ' vezes, diariamente' : ' vezes, semanalmente')}"></dd></div></dl>
+    <section aria-labelledby="preview-title"><h2 id="preview-title">Mensagem por destinatário</h2><p class="hint">Esta é a cópia que será enviada. Alterações futuras no modelo não mudam esta mensagem.</p>
+        <details class="recipient-preview" th:each="recipient, iter : ${detail.recipients}" th:open="${iter.first}"><summary th:text="${recipient.email}"></summary><h3 th:text="${recipient.subject}"></h3><pre class="message-text" th:text="${recipient.text}"></pre>
+            <div th:if="${recipient.html != null and !recipient.html.isBlank()}"><h4>Versão formatada, protegida</h4><iframe class="message-preview" sandbox="" referrerpolicy="no-referrer" title="Prévia protegida da mensagem" th:srcdoc="${recipient.previewDocument()}"></iframe></div>
+        </details>
+    </section>
+    <section th:if="${message.status == 'DRAFT'}" class="delivery-confirmation" aria-labelledby="confirm-title"><h2 id="confirm-title">Tudo certo?</h2>
+        <form method="post" th:action="@{/messages/{id}/test(id=${message.id})}" data-confirm="Enviar um teste real para o e-mail da sua conta?"><p class="hint">Opcional: envie um teste para <strong th:text="${ownEmail}"></strong>. É permitido um teste por rascunho.</p><button class="button ghost" type="submit">Enviar teste só para mim</button></form>
+        <p>Ao confirmar, você autoriza o envio para os destinatários e horários acima. Envie apenas a pessoas que esperam receber sua mensagem.</p>
+        <form method="post" th:action="@{/messages/{id}/confirm(id=${message.id})}" data-confirm="Confirmar o envio para os destinatários e horários revisados?"><button class="button primary-link" type="submit" th:text="${message.mode == 'NOW' ? 'Confirmar e enviar' : 'Confirmar agendamento'}"></button></form>
+        <p class="hint">Precisa corrigir algo? <a th:href="@{/messages/new}">Prepare um novo rascunho</a> e cancele este abaixo. Nada é enviado enquanto ele não for confirmado.</p>
+    </section>
+    <section th:if="${!detail.jobs.isEmpty()}" aria-labelledby="history-title"><h2 id="history-title">Resultado por destinatário</h2><p class="hint">“Aceito pelo provedor” não garante chegada à caixa de entrada. Um resultado incerto nunca é repetido automaticamente: confira sua caixa de enviados antes de preparar outro envio.</p><a class="button ghost" th:href="@{/messages/{id}(id=${message.id})}">Atualizar resultados</a>
+        <div class="delivery-history"><article th:each="job : ${detail.jobs}" class="delivery-row"><div><strong th:text="${job.email}"></strong><p th:text="${job.label()}"></p><small th:text="${#temporals.format(job.when.atZone(T(java.time.ZoneId).of(message.timezone)), 'dd/MM/yyyy HH:mm') + ' · ' + message.timezone + ' · tentativas: ' + job.attempts}"></small></div>
+            <form th:if="${job.releasable() and message.status != 'CANCELLED' and message.status != 'PAUSED'}" method="post" th:action="@{/messages/{id}/jobs/{jobId}/release(id=${message.id},jobId=${job.id})}" data-confirm="Enviar esta mensagem agora? Confira se ela ainda deve ser enviada."><button class="button ghost" type="submit">Enviar esta agora</button></form>
+        </article></div>
+    </section>
+    <section class="delivery-controls" th:if="${message.status != 'CANCELLED'}"><h2>Controlar este envio</h2><p class="hint">Pausar ou cancelar impede os próximos disparos. Uma transmissão que já começou pode terminar.</p><div class="form-actions">
+        <form th:if="${message.status == 'QUEUED'}" method="post" th:action="@{/messages/{id}/pause(id=${message.id})}"><button class="button ghost" type="submit">Pausar</button></form>
+        <form th:if="${message.status == 'PAUSED'}" method="post" th:action="@{/messages/{id}/resume(id=${message.id})}"><button class="button primary-link" type="submit">Retomar fila</button></form>
+        <form th:if="${message.status != 'COMPLETED'}" method="post" th:action="@{/messages/{id}/cancel(id=${message.id})}" data-confirm="Cancelar todos os disparos pendentes deste envio?"><button class="button ghost" type="submit">Cancelar pendentes</button></form>
+    </div></section>
+</main></body></html>

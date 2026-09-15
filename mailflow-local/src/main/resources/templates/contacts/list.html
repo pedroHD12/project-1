@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contatos · MailFlow Local</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+<script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('contacts')}"></aside>
+
+<main id="main-content" class="page-container">
+    <div class="page-heading">
+        <div><h1>Contatos</h1><p class="subtitle">Até 100 resultados por consulta nesta primeira versão.</p></div>
+        <a class="button primary-link" th:href="@{/contacts/new}" href="/contacts/new">+ Novo contato</a>
+    </div>
+
+    <div class="flash success" role="status" th:if="${success}" th:text="${success}"></div>
+
+    <form class="search-bar" method="get" th:action="@{/contacts}">
+        <label class="sr-only" for="q">Pesquisar contatos</label>
+        <input id="q" name="q" type="search" th:value="${query}" placeholder="Pesquisar por nome, e-mail ou empresa">
+        <button class="button secondary" type="submit">Pesquisar</button>
+        <a class="button ghost" th:if="${query != ''}" th:href="@{/contacts}">Limpar</a>
+    </form>
+
+    <section class="table-card">
+        <div class="empty-state" th:if="${#lists.isEmpty(contacts)}">
+            <h2>Nenhum contato encontrado</h2>
+            <p>Cadastre o primeiro contato ou altere os termos da pesquisa.</p>
+        </div>
+        <div class="table-scroll" th:unless="${#lists.isEmpty(contacts)}">
+            <table>
+                <thead><tr><th>Contato</th><th>Empresa</th><th>Situação</th><th class="actions-column">Ações</th></tr></thead>
+                <tbody>
+                <tr th:each="contact : ${contacts}">
+                    <td><strong th:text="${contact.displayName ?: 'Sem nome'}">Nome</strong><small th:text="${contact.email}">email</small></td>
+                    <td th:text="${contact.company ?: '—'}">—</td>
+                    <td><span class="status-chip" th:classappend="${contact.status.name().toLowerCase()}" th:text="${contact.status.name() == 'ACTIVE' ? 'Ativo' : (contact.status.name() == 'BLOCKED' ? 'Bloqueado' : 'Descadastrado')}">ACTIVE</span></td>
+                    <td class="row-actions">
+                        <a class="text-link" th:href="@{/contacts/{id}/edit(id=${contact.id})}">Editar</a>
+                        <form method="post" th:action="@{/contacts/{id}/status(id=${contact.id})}" th:if="${contact.status.name() == 'ACTIVE'}">
+                            <input type="hidden" name="status" value="BLOCKED">
+                            <button class="text-button" type="submit">Bloquear</button>
+                        </form>
+                        <form method="post" th:action="@{/contacts/{id}/status(id=${contact.id})}" th:unless="${contact.status.name() == 'ACTIVE'}">
+                            <input type="hidden" name="status" value="ACTIVE">
+                            <button class="text-button" type="submit">Ativar</button>
+                        </form>
+                        <form method="post" th:action="@{/contacts/{id}/delete(id=${contact.id})}" data-confirm="Excluir este contato e seus vínculos? Esta ação não pode ser desfeita.">
+                            <button class="text-button danger-text" type="submit">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

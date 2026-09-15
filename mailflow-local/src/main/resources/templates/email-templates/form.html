@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${formTitle + ' · MailFlow Local'}">Modelo de mensagem · MailFlow Local</title><link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+<script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('templates')}"></aside>
+<main id="main-content" class="page-container narrow">
+    <div class="page-heading"><div><h1 th:text="${formTitle}">Modelo de mensagem</h1><p class="subtitle">Escreva o conteúdo que você quer reutilizar nas suas mensagens.</p></div></div>
+    <form class="form-card" method="post" th:action="${formAction}" th:object="${emailTemplateForm}">
+        <div class="field"><label for="name">Nome do modelo *</label><input id="name" th:field="*{name}" maxlength="160" required><small class="field-error" th:errors="*{name}"></small></div>
+        <div class="field"><label for="subject">Assunto *</label><input id="subject" th:field="*{subject}" maxlength="998" required><small class="field-error" th:errors="*{subject}"></small></div>
+        <div class="field"><label for="bodyText">Conteúdo em texto</label><textarea id="bodyText" th:field="*{bodyText}" rows="10" maxlength="100000" placeholder="Olá {{nome}},"></textarea><small class="field-error" th:errors="*{bodyText}"></small></div>
+        <div class="field"><label for="bodyHtml">Conteúdo HTML opcional</label><textarea id="bodyHtml" class="code-area" th:field="*{bodyHtml}" rows="10" maxlength="300000" placeholder="<p>Olá {{nome}},</p>"></textarea><small class="hint">Avançado: guarde aqui seu código HTML. Esta versão não visualiza nem envia esse conteúdo.</small><small class="field-error" th:errors="*{bodyHtml}"></small></div>
+        <div class="flash error" th:if="${#fields.hasErrors('contentPresent')}" th:errors="*{contentPresent}"></div>
+        <div class="form-actions"><a class="button ghost" th:href="@{/templates}">Cancelar</a><button class="button primary-link" type="submit">Salvar modelo</button></div>
+    </form>
+</main>
+</body>
+</html>

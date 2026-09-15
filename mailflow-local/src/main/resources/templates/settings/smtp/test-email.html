@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Enviar teste · MailFlow Local</title><link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('email')}"></aside>
+<main id="main-content" class="page-container narrow">
+    <div class="page-heading"><div><h1>Enviar e-mail de teste</h1><p class="subtitle">Conta: <strong th:text="${account.name}">Conta</strong></p></div></div>
+    <form class="form-card" method="post" th:action="@{/settings/smtp/{id}/test-email(id=${account.id})}" th:object="${testEmailForm}">
+        <div class="flash error" role="alert" th:if="${sendError}" th:text="${sendError}"></div>
+        <div class="notice warning"><strong>Este botão enviará um e-mail real</strong><p>Somente o endereço informado abaixo receberá a mensagem. Nenhum agendamento ou envio coletivo será criado.</p></div>
+        <div class="field"><label for="recipient">Destinatário do teste *</label><input id="recipient" type="email" th:field="*{recipient}" maxlength="320" required autofocus><small class="field-error" th:errors="*{recipient}"></small></div>
+        <div class="form-actions"><a class="button ghost" th:href="@{/settings/smtp}">Cancelar</a><button class="button danger" type="submit">Confirmar envio real</button></div>
+    </form>
+</main>
+</body>
+</html>

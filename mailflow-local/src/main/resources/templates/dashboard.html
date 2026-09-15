@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Início · MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('home')}"></aside>
+<main id="main-content" class="page-container">
+    <div class="page-heading"><div><h1>Seu e-mail, organizado.</h1><p class="subtitle">Prepare, revise e envie suas mensagens no horário certo.</p></div><a class="button primary-link" th:href="@{/messages/new}">Novo envio</a></div>
+    <section class="getting-started" aria-labelledby="setup-title">
+        <h2 id="setup-title">Prepare seu primeiro envio</h2>
+        <ol class="setup-steps">
+            <li><div><h3>Conecte seu e-mail</h3><p>Escolha o endereço que vai enviar as mensagens.</p></div><a class="text-link" th:href="@{/settings/smtp}">Configurar meu e-mail</a></li>
+            <li><div><h3>Adicione quem vai receber</h3><p>Salve nome e endereço na sua agenda de contatos.</p></div><a class="text-link" th:href="@{/contacts/new}">Adicionar contato</a></li>
+            <li><div><h3>Escreva sua mensagem</h3><p>Crie um modelo reutilizável com assunto e conteúdo.</p></div><a class="text-link" th:href="@{/templates/new}">Criar modelo</a></li>
+        </ol>
+    </section>
+    <section class="workspace-summary" aria-label="Seus cadastros"><a th:href="@{/contacts}"><strong th:text="${stats.contacts}">0</strong> contatos salvos</a><a th:href="@{/templates}"><strong th:text="${stats.templates}">0</strong> modelos salvos</a></section>
+    <section class="development-note"><h2>Envie agora ou deixe agendado</h2><p>Em Novo envio, escolha seus contatos, escreva a mensagem e revise antes de confirmar. Você também pode repetir diariamente ou semanalmente, com um total definido de ocorrências.</p><p>Mantenha o computador e o aplicativo ligados para os envios automáticos. Se um horário for perdido, confira o histórico: atrasos maiores que 15 minutos precisam da sua revisão.</p><a class="text-link" th:href="@{/history}">Acompanhar meus envios</a></section>
+</main>
+</body>
+</html>

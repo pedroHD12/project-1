@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Novo envio · MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script><script defer th:src="@{/js/delivery.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('send')}"></aside>
+<main id="main-content" class="page-container narrow delivery-page">
+    <div class="page-heading"><div><h1>Novo envio</h1><p class="subtitle">Prepare a mensagem. Você vai revisar tudo antes de enviar.</p></div></div>
+    <div class="flash" th:if="${accounts.isEmpty() or contacts.isEmpty()}"><p>Antes de continuar, <a th:href="@{/settings/smtp/new}">configure seu e-mail</a> e <a th:href="@{/contacts/new}">adicione um contato ativo</a>.</p></div>
+    <details class="advanced-options" th:if="${!templates.isEmpty()}"><summary>Começar com um modelo salvo</summary>
+        <form method="get" th:action="@{/messages/new}" class="template-loader"><label for="templateId">Modelo de mensagem</label><select id="templateId" name="templateId" required><option value="">Escolha um modelo</option><option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.name}"></option></select><p class="hint">Carregar um modelo substitui os campos desta página. Faça isso antes de escrever.</p><button type="submit" class="button ghost">Carregar modelo</button></form>
+    </details>
+    <form method="post" th:action="@{/messages}" th:object="${dispatchForm}" class="delivery-form">
+        <div class="flash error" role="alert" th:if="${#fields.hasAnyErrors()}"><strong>Confira os campos para continuar.</strong><ul><li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li></ul></div>
+        <fieldset><legend>1. Quem envia e quem recebe</legend>
+            <div class="field"><label for="accountId">Enviar pelo meu e-mail *</label><select id="accountId" th:field="*{accountId}" required th:attr="aria-invalid=${#fields.hasErrors('accountId')}"><option value="">Escolha seu e-mail</option><option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.defaultSender}"></option></select></div>
+            <p id="recipient-help" class="hint">Selecione até 20 contatos. Cada pessoa recebe uma mensagem separada, sem ver os outros endereços. São exibidos os primeiros 100 contatos.</p>
+            <div class="recipient-picker" aria-label="Destinatários" aria-describedby="recipient-help">
+                <label th:each="contact : ${contacts}" class="recipient-option"><input type="checkbox" th:field="*{contactIds}" th:value="${contact.id}"><span><strong th:text="${contact.displayName ?: contact.email}"></strong><small th:text="${contact.email}"></small></span></label>
+            </div><small class="field-error" th:errors="*{contactIds}"></small>
+        </fieldset>
+        <fieldset><legend>2. Sua mensagem</legend>
+            <div class="field"><label for="subject">Assunto *</label><input id="subject" th:field="*{subject}" maxlength="998" required th:attr="aria-invalid=${#fields.hasErrors('subject')}"></div>
+            <div class="field"><label for="bodyText">Mensagem</label><textarea id="bodyText" th:field="*{bodyText}" rows="8" maxlength="50000" aria-describedby="message-help"></textarea><p id="message-help" class="hint">Use <code>{{nome}}</code> e <code>{{email}}</code> para personalizar. Na próxima página você verá o resultado para cada pessoa.</p></div>
+            <details class="advanced-options" th:open="${dispatchForm.bodyHtml != null and !dispatchForm.bodyHtml.isBlank()}"><summary>Formatação HTML (opcional)</summary><div class="field"><label for="bodyHtml">Conteúdo HTML</label><textarea id="bodyHtml" th:field="*{bodyHtml}" rows="6" maxlength="50000"></textarea><p class="hint">Somente formatação básica é mantida. Scripts, imagens, links, estilos e rastreadores serão removidos. Se preencher, o HTML será a versão formatada enviada.</p></div></details>
+        </fieldset>
+        <fieldset><legend>3. Quando enviar</legend>
+            <div class="field"><label for="mode">Enviar</label><select id="mode" th:field="*{mode}"><option value="NOW">Agora, depois da confirmação</option><option value="ONCE">Uma vez, em data e horário escolhidos</option><option value="DAILY">Repetir diariamente</option><option value="WEEKLY">Repetir semanalmente</option></select></div>
+            <div id="schedule-fields" class="field-grid two">
+                <div class="field"><label for="scheduledAt">Primeira data e horário</label><input type="datetime-local" id="scheduledAt" th:field="*{scheduledAt}"></div>
+                <div class="field"><label for="timezone">Fuso horário</label><select id="timezone" th:field="*{timezone}"><option value="America/Sao_Paulo">Brasília · São Paulo</option><option value="America/Manaus">Manaus</option><option value="America/Rio_Branco">Rio Branco</option><option value="America/Noronha">Fernando de Noronha</option><option value="Europe/Lisbon">Lisboa</option><option value="UTC">UTC</option></select></div>
+                <div class="field" id="repeat-fields"><label for="occurrences">Total de ocorrências</label><input type="number" id="occurrences" th:field="*{occurrences}" min="1" max="30"><small class="hint">Inclui a primeira. De 1 a 30; depois a automação termina.</small></div>
+            </div>
+            <p class="hint">O computador e o aplicativo precisam estar ligados, com internet. Atrasos maiores que 15 minutos ficam aguardando sua revisão. Limites locais: 12 tentativas por minuto e 200 por dia.</p>
+        </fieldset>
+        <div class="form-actions"><a class="button ghost" th:href="@{/history}">Ver meus rascunhos</a><button class="button primary-link" type="submit" th:disabled="${accounts.isEmpty() or contacts.isEmpty()}">Revisar mensagem</button></div>
+    </form>
+</main></body></html>

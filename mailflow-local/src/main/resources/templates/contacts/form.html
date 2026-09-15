@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${formTitle + ' · MailFlow Local'}">Contato · MailFlow Local</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+<script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('contacts')}"></aside>
+
+<main id="main-content" class="page-container narrow">
+    <div class="page-heading"><div><h1 th:text="${formTitle}">Contato</h1></div></div>
+    <form class="form-card" method="post" th:action="${formAction}" th:object="${contactForm}">
+        <div class="field-grid two">
+            <div class="field"><label for="displayName">Nome</label><input id="displayName" th:field="*{displayName}" maxlength="160" autocomplete="name"><small class="field-error" th:errors="*{displayName}"></small></div>
+            <div class="field"><label for="email">E-mail *</label><input id="email" type="email" th:field="*{email}" maxlength="320" required autocomplete="email"><small class="field-error" th:errors="*{email}"></small></div>
+            <div class="field"><label for="company">Empresa</label><input id="company" th:field="*{company}" maxlength="160" autocomplete="organization"><small class="field-error" th:errors="*{company}"></small></div>
+            <div class="field"><label for="birthday">Aniversário</label><input id="birthday" type="date" th:field="*{birthday}"><small class="field-error" th:errors="*{birthday}"></small></div>
+        </div>
+        <div class="field"><label for="notes">Observações</label><textarea id="notes" th:field="*{notes}" rows="5" maxlength="4000"></textarea><small class="field-error" th:errors="*{notes}"></small></div>
+        <div class="form-actions"><a class="button ghost" th:href="@{/contacts}">Cancelar</a><button class="button primary-link" type="submit">Salvar contato</button></div>
+    </form>
+</main>
+</body>
+</html>

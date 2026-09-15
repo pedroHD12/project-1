@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: mailflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mailflow
+      POSTGRES_USER: mailflow
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD antes de iniciar o banco}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - mailflow_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mailflow -d mailflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mailflow_postgres_data:

@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${title + ' · MailFlow'}"></title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar"><aside th:replace="~{fragments/navigation :: sidebar(${kind})}"></aside>
+<main id="main-content" class="page-container delivery-page"><div class="page-heading"><div><h1 th:text="${title}"></h1><p class="subtitle" th:text="${kind == 'automations' ? 'Mensagens que se repetem diariamente ou semanalmente, até o total que você definiu.' : 'Abra um envio para revisar a mensagem e acompanhar cada destinatário.'}"></p></div><a class="button primary-link" th:href="@{/messages/new}">Novo envio</a></div>
+    <p class="hint">Os agendamentos funcionam enquanto o aplicativo e o computador estiverem ligados. Atrasos maiores que 15 minutos precisam de revisão. Limites: 12 tentativas por minuto e 200 em 24 horas, somando as contas.</p>
+    <section th:if="${messages.isEmpty()}" class="empty-state"><h2>Nenhum envio por aqui ainda</h2><p>Escolha seus contatos, escreva a mensagem e revise antes de confirmar. Para repetir, escolha “diariamente” ou “semanalmente”.</p><a class="text-link" th:href="@{/messages/new}">Preparar minha primeira mensagem</a></section>
+    <div class="delivery-history" th:unless="${messages.isEmpty()}"><article th:each="item : ${messages}" class="delivery-row"><div><a class="text-link" th:href="@{/messages/{id}(id=${item.id})}" th:text="${item.subject}"></a><p><span th:text="${item.label()}"></span> · <span th:text="${item.sent + ' de ' + item.total + ' aceitos pelo provedor'}"></span></p><p th:if="${item.attention > 0}" th:text="${item.attention + ' resultado(s) precisam da sua atenção'}"></p></div><a class="button ghost" th:href="@{/messages/{id}(id=${item.id})}" th:attr="aria-label=${'Abrir envio: ' + item.subject}">Abrir envio</a></article></div>
+    <p class="hint" th:if="${messages.size() == 100}">Mostrando os 100 envios mais recentes.</p>
+</main></body></html>

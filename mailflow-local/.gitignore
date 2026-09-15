@@ -1,0 +1,11 @@
+target/
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+application-local.yml
+data/
+backups/
+.local-tools/
+.impeccable/review/

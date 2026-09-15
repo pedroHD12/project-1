@@ -1,0 +1,25 @@
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:h2:mem:mailflow-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create-drop
+  quartz:
+    job-store-type: memory
+    properties:
+      org.quartz.threadPool.threadCount: 1
+
+app:
+  delivery:
+    enabled: false
+  security:
+    username: test-user
+    password: test-password-only

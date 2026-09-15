@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Meu e-mail · MailFlow Local</title><link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+<script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('email')}"></aside>
+<main id="main-content" class="page-container">
+    <div class="page-heading"><div><h1>Meu e-mail</h1><p class="subtitle">Gerencie os endereços de envio. Use Testar conexão para verificar os dados salvos.</p></div><a class="button primary-link" th:href="@{/settings/smtp/new}">Conectar e-mail</a></div>
+    <div class="flash success" role="status" th:if="${success}" th:text="${success}"></div><div class="flash error" role="alert" th:if="${error}" th:text="${error}"></div>
+    <section class="table-card">
+        <div class="empty-state" th:if="${#lists.isEmpty(accounts)}"><h2>Nenhuma conta configurada</h2><p>Cadastre sua conta de envio para validar a conexão.</p></div>
+        <div class="table-scroll" th:unless="${#lists.isEmpty(accounts)}"><table><thead><tr><th>Conta</th><th>Servidor</th><th>Segurança</th><th>Permissão de envio</th><th class="actions-column">Ações</th></tr></thead><tbody>
+        <tr th:each="account : ${accounts}">
+            <td><strong th:text="${account.name}">Conta</strong><small th:text="${account.defaultSender ?: account.username ?: 'Sem remetente'}">remetente</small></td>
+            <td><span th:text="${account.host + ':' + account.port}">host</span></td><td th:text="${account.encryptionMode.label}">STARTTLS</td>
+            <td><span class="status-chip" th:classappend="${account.enabled} ? 'active' : 'blocked'" th:text="${account.enabled} ? 'Habilitada' : 'Pausada'">Habilitada</span></td>
+            <td class="row-actions"><a class="text-link" th:href="@{/settings/smtp/{id}/edit(id=${account.id})}">Editar</a><form method="post" th:action="@{/settings/smtp/{id}/diagnose(id=${account.id})}"><button class="text-button" type="submit">Testar conexão</button></form><a class="text-link" th:href="@{/settings/smtp/{id}/test-email(id=${account.id})}">Enviar teste</a></td>
+        </tr></tbody></table></div>
+    </section>
+</main>
+</body>
+</html>

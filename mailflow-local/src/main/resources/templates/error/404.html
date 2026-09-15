@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Não encontrado · MailFlow Local</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+</head>
+<body class="app-page">
+<main class="page-container narrow">
+    <section class="form-card empty-state">
+        <p class="eyebrow">ERRO 404</p>
+        <h1>Conteúdo não encontrado</h1>
+        <p class="subtitle" th:text="${message ?: 'O item solicitado não existe mais.'}">O item não existe.</p>
+        <a class="button primary-link" th:href="@{/}">Voltar ao painel</a>
+    </section>
+</main>
+</body>
+</html>
+

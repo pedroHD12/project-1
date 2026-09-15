@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criar minha conta — MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="auth-page"><main class="auth-panel">
+<a class="auth-brand" th:href="@{/login}">MailFlow<span>Seu e-mail, no seu tempo.</span></a>
+<h1>Seu espaço começa aqui.</h1><p class="auth-intro">Crie a conta principal deste computador. Se já houver contatos e modelos locais, eles ficarão nesta conta.</p>
+<form th:action="@{/register}" th:object="${registrationForm}" method="post" class="auth-form">
+<div class="alert error" role="alert" th:if="${#fields.hasAnyErrors()}"><p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p></div>
+<label for="name">Como podemos chamar você?</label><input id="name" th:field="*{name}" maxlength="160" autocomplete="name" required autofocus aria-describedby="name-error" th:attr="aria-invalid=${#fields.hasErrors('name')}"><small id="name-error" class="field-error" th:errors="*{name}"></small>
+<label for="email">Seu e-mail</label><input id="email" th:field="*{email}" type="email" maxlength="320" autocomplete="username" required aria-describedby="email-error" th:attr="aria-invalid=${#fields.hasErrors('email')}"><small id="email-error" class="field-error" th:errors="*{email}"></small>
+<label for="password">Crie uma senha</label><input id="password" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password" aria-describedby="password-help" required>
+<small id="password-help">Use uma frase com pelo menos 12 caracteres. Esta é a senha do MailFlow. Guarde-a: ainda não há recuperação de senha nesta versão.</small>
+<label for="confirmPassword">Repita a senha</label><input id="confirmPassword" name="confirmPassword" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+<button class="button primary" type="submit">Criar minha conta</button>
+</form>
+<p>Já tem uma conta? <a th:href="@{/login}">Entrar</a></p>
+<p class="auth-footnote">Depois deste cadastro, a criação de novas contas será encerrada nesta instalação.</p>
+</main></body></html>

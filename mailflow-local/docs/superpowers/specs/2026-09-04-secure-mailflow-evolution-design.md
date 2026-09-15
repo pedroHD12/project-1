@@ -1,7 +1,7 @@
 # MailFlow Local — evolução segura do produto
 
 Data: 2026-09-04  
-Estado: desenho aprovado em conversa; aguardando revisão deste documento antes do plano de implementação
+Estado: incrementos A/B e núcleo C/D implementados em setembro de 2026. C/D inclui envio revisado, confirmação, histórico, agendamento único e repetição diária/semanal finita. Importação, relatórios avançados, anexos, sequências condicionais, recuperação de senha e hospedagem permanecem fora desta entrega; esta especificação também registra a direção futura, não uma lista de recursos já disponíveis.
 
 ## 1. Objetivo
 
@@ -39,7 +39,7 @@ O trabalho será entregue em quatro incrementos independentes.
 - Navegação principal e seção recolhível “Mais recursos”.
 - Onboarding do primeiro uso.
 - “SMTP” passa a ser apresentado como “Meu e-mail”.
-- Presets seguros para Gmail, Outlook/Hotmail e “Outro e-mail”.
+- Presets seguros para Gmail/Google Workspace e configuração manual de outro serviço. Outlook/Hotmail foi adiado: precisa de OAuth2, não apenas de um preset SMTP com senha.
 - Configurações técnicas dentro de uma seção avançada.
 
 ### Incremento C — novo envio
@@ -124,7 +124,7 @@ Antes da migração será exigido um backup verificável do banco. A reversão s
 
 - Senhas nunca são registradas nem armazenadas de forma reversível.
 - O hash usa BCrypt com custo 12.
-- O formulário aceita de 12 a 128 caracteres e rejeita uma lista local mínima de senhas comuns; não haverá consulta externa durante o cadastro.
+- O formulário exige pelo menos 12 caracteres e aceita no máximo 72 bytes UTF-8, respeitando o limite do BCrypt sem truncamento. Rejeita uma lista local mínima de senhas comuns; não há consulta externa durante o cadastro.
 - A confirmação é validada no servidor.
 - Recuperação de senha por e-mail não faz parte deste incremento.
 
@@ -134,7 +134,7 @@ Antes da migração será exigido um backup verificável do banco. A reversão s
 - Depois de cinco falhas consecutivas, a conta fica bloqueada por cinco minutos; um login bem-sucedido zera o contador.
 - Renovação do identificador de sessão após login.
 - CSRF em todas as mutações.
-- Cookies `HttpOnly` e `SameSite=Lax`; `Secure` é obrigatório em perfil hospedado com HTTPS.
+- Cookies `HttpOnly` e `SameSite=Strict`; `Secure` é obrigatório em perfil hospedado com HTTPS.
 - Cabeçalhos contra framing e sniffing; CSP compatível com os recursos locais.
 - Logout por POST e invalidação da sessão.
 - A senha administrativa temporária atual e seu log serão removidos.
@@ -148,7 +148,7 @@ A edição hospedada não poderá usar DPAPI como solução principal. Publicaç
 Presets de provedor serão definidos no backend:
 
 - Gmail;
-- Outlook/Hotmail;
+- Outlook/Hotmail: integração OAuth2 planejada, ainda indisponível;
 - Outro e-mail, em modo avançado.
 
 Para presets conhecidos, host, porta e TLS são derivados pelo servidor, ignorando valores adulterados pelo navegador. O sistema explica em linguagem comum que o provedor ainda pode exigir senha de aplicativo ou OAuth.
@@ -229,7 +229,7 @@ Com dois workspaces de teste, o usuário A não pode listar, contar, abrir, edit
 
 ### 11.3 Banco e migração
 
-- migrations executadas em PostgreSQL real com Testcontainers; quando Docker não estiver disponível, a mesma suíte usa `TEST_DATABASE_URL` e permanece marcada como não executada até um dos dois caminhos funcionar;
+- migrations executadas em PostgreSQL real temporário via embedded PostgreSQL, sem depender do banco pessoal; a validação desta entrega usa PostgreSQL 14.22, não o PostgreSQL 17 do Compose;
 - dados legados preservam IDs e relações;
 - nenhum registro fica sem workspace;
 - unicidades funcionam dentro do workspace e permitem repetição em outro;
@@ -273,7 +273,7 @@ Nenhum teste fará envio real sem configuração e autorização explícitas. Ga
 - Todos os serviços e contadores de domínio usam o workspace autenticado.
 - Segredos não aparecem em banco em texto simples, HTML, logs ou respostas.
 - A navegação funciona em desktop, celular e teclado.
-- A configuração comum de Gmail ou Outlook não exige digitar host, porta ou TLS.
+- A configuração comum de Gmail não exige digitar host, porta ou TLS. Outlook depende da futura integração OAuth2.
 - O envio real exige revisão e confirmação e não duplica por repetição da requisição.
 - Testes de PostgreSQL, segurança, interface e regressão passam antes de declarar conclusão.
 - A aplicação continua limitada a localhost enquanto os requisitos de hospedagem não forem satisfeitos.

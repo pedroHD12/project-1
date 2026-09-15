@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar — MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body class="auth-page"><main class="auth-panel">
+<a class="auth-brand" th:href="@{/login}">MailFlow<span>Seu e-mail, no seu tempo.</span></a>
+<h1>Bom ter você aqui.</h1><p class="auth-intro">Entre para cuidar das suas mensagens.</p>
+<p class="alert success" role="status" th:if="${success}" th:text="${success}"></p>
+<p class="alert error" role="alert" th:if="${param.error}">Não foi possível entrar. Confira seu e-mail e senha. Após várias tentativas, aguarde até cinco minutos.</p>
+<p class="alert success" role="status" th:if="${param.logout}">Você saiu da sua conta.</p>
+<form th:action="@{/login}" method="post" class="auth-form">
+<label for="username">Seu e-mail</label><input id="username" name="username" type="email" maxlength="320" autocomplete="username" required autofocus>
+<label for="password">Sua senha</label><input id="password" name="password" type="password" maxlength="72" autocomplete="current-password" required>
+<button class="button primary" type="submit">Entrar</button>
+</form>
+<p th:if="${registrationOpen}">Primeira vez? <a th:href="@{/register}">Criar minha conta</a></p>
+<p class="auth-footnote">O MailFlow está neste computador. Suas mensagens ficam no seu espaço privado.</p>
+</main></body></html>

@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modelos de mensagem · MailFlow Local</title><link rel="stylesheet" th:href="@{/css/app.css}" href="/css/app.css">
+<script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('templates')}"></aside>
+<main id="main-content" class="page-container">
+    <div class="page-heading"><div><h1>Modelos de mensagem</h1><p class="subtitle">Modelos reutilizáveis com variáveis como <code>{{nome}}</code>.</p></div><a class="button primary-link" th:href="@{/templates/new}">+ Novo modelo</a></div>
+    <div class="flash success" role="status" th:if="${success}" th:text="${success}"></div>
+    <section class="card-grid" th:unless="${#lists.isEmpty(templates)}">
+        <article class="content-card" th:each="template : ${templates}" th:classappend="${!template.active} ? 'muted-card'">
+            <div class="card-top"><span class="status-chip" th:classappend="${template.active} ? 'active' : 'blocked'" th:text="${template.active} ? 'ATIVO' : 'ARQUIVADO'">ATIVO</span><small th:text="${#temporals.format(template.updatedAt, 'dd/MM/yyyy HH:mm')}">data</small></div>
+            <h2 th:text="${template.name}">Nome</h2><p class="subject" th:text="${template.subject}">Assunto</p>
+            <div class="card-actions"><a class="button secondary" th:href="@{/templates/{id}/edit(id=${template.id})}">Editar</a><form method="post" th:action="@{/templates/{id}/active(id=${template.id})}"><input type="hidden" name="active" th:value="${!template.active}"><button class="button ghost" type="submit" th:text="${template.active} ? 'Arquivar' : 'Restaurar'">Arquivar</button></form></div>
+        </article>
+    </section>
+    <section class="table-card empty-state" th:if="${#lists.isEmpty(templates)}"><h2>Nenhum modelo criado</h2><p>Crie um modelo para reutilizar assunto e conteúdo.</p></section>
+</main>
+</body>
+</html>

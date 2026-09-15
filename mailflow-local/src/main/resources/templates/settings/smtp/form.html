@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title th:text="${formTitle + ' · MailFlow'}">Meu e-mail</title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar">
+<aside th:replace="~{fragments/navigation :: sidebar('email')}"></aside>
+<main id="main-content" class="page-container narrow">
+    <div class="page-heading"><div><h1 th:text="${formTitle}">Meu e-mail</h1><p class="subtitle">Conecte o endereço que aparecerá como quem enviou a mensagem.</p></div></div>
+    <form class="form-card email-setup" method="post" th:action="${formAction}" th:object="${smtpAccountForm}" autocomplete="off">
+        <div class="flash error" role="alert" th:if="${#fields.hasAnyErrors()}"><strong>Confira os dados abaixo.</strong><ul><li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li></ul></div>
+        <div class="field"><label for="defaultSender">Seu e-mail *</label><input id="defaultSender" type="email" th:field="*{defaultSender}" maxlength="320" required autocomplete="email" placeholder="voce@gmail.com" aria-describedby="email-help"><small class="hint" id="email-help">No Gmail, preenchemos os dados do servidor. Você só precisa informar o e-mail e a senha de aplicativo.</small></div>
+        <label class="checkbox-field"><input id="custom-email" type="checkbox" th:checked="${smtpAccountForm.provider != 'AUTO'}"><span>Tenho um e-mail personalizado ou uso outro serviço</span></label>
+        <div id="provider-options" class="field">
+            <label for="provider">Onde seu e-mail foi criado?</label>
+            <select id="provider" th:field="*{provider}">
+                <option value="AUTO">Detectar pelo endereço (Gmail)</option>
+                <option value="GOOGLE">Google / Google Workspace</option>
+                <option value="CUSTOM">Outro serviço — tenho os dados de conexão</option>
+            </select>
+            <small class="hint">Exemplo de e-mail personalizado: voce@suaempresa.com. Outlook e Microsoft 365 precisam de uma integração de autorização ainda não disponível.</small>
+        </div>
+        <div id="custom-settings" class="field-grid two">
+            <div class="field"><label for="host">Endereço do servidor de envio *</label><input id="host" th:field="*{host}" maxlength="255" placeholder="smtp.seuprovedor.com"><small class="hint">Copie o endereço informado pelo serviço de e-mail.</small></div>
+            <div class="field"><label for="port">Porta informada pelo serviço *</label><input id="port" type="number" th:field="*{port}" min="1" max="65535"></div>
+            <div class="field"><label for="username">Usuário de acesso</label><input id="username" th:field="*{username}" maxlength="320" autocomplete="username"><small class="hint">Geralmente é o seu endereço de e-mail completo.</small></div>
+            <div class="field"><label for="encryptionMode">Conexão protegida *</label><select id="encryptionMode" th:field="*{encryptionMode}"><option th:each="mode : ${encryptionModes}" th:value="${mode}" th:text="${mode.label}"></option></select></div>
+        </div>
+        <div class="field"><label for="password">Senha de aplicativo</label><input id="password" name="password" type="password" maxlength="500" autocomplete="new-password" aria-describedby="password-help"><small class="hint" id="password-help">Obrigatória ao conectar um Gmail pela primeira vez. Não use sua senha normal. <a href="https://support.google.com/accounts/answer/185833?hl=pt-BR" target="_blank" rel="noopener noreferrer">Como gerar uma senha de aplicativo</a>.</small><small class="hint" th:if="${smtpAccountForm.existingSecret}">Deixe em branco para manter a credencial atual. Se mudar o serviço ou o usuário, informe-a novamente.</small></div>
+        <details class="advanced-options"><summary>Outras opções</summary><div class="field"><label for="name">Nome para identificar este e-mail (opcional)</label><input id="name" th:field="*{name}" maxlength="120" placeholder="Meu e-mail pessoal"></div><label class="checkbox-field"><input type="checkbox" th:field="*{enabled}"><span>Permitir envios por esta conta</span></label></details>
+        <p class="hint">A credencial é protegida pelo Windows antes de ser salva. Salvar não envia mensagens nem testa a conexão.</p>
+        <div class="form-actions"><a class="button ghost" th:href="@{/settings/smtp}">Cancelar</a><button class="button primary-link" type="submit">Salvar e-mail</button></div>
+    </form>
+</main>
+</body>
+</html>

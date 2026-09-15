@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar(active)" class="app-sidebar">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    <a class="brand compact" th:href="@{/}"><span class="brand-mark" aria-hidden="true">M</span><strong>MailFlow</strong></a>
+    <details class="navigation-disclosure" open>
+        <summary>Menu de navegação</summary>
+        <nav aria-label="Navegação principal">
+            <a th:href="@{/}" th:classappend="${active == 'home'} ? 'active'" th:attr="aria-current=${active == 'home'} ? 'page'">Início</a>
+            <a th:href="@{/messages/new}" th:classappend="${active == 'send'} ? 'active'" th:attr="aria-current=${active == 'send'} ? 'page'">Novo envio</a>
+            <a th:href="@{/contacts}" th:classappend="${active == 'contacts'} ? 'active'" th:attr="aria-current=${active == 'contacts'} ? 'page'">Contatos</a>
+            <a th:href="@{/templates}" th:classappend="${active == 'templates'} ? 'active'" th:attr="aria-current=${active == 'templates'} ? 'page'">Modelos de mensagem</a>
+            <a th:href="@{/automations}" th:classappend="${active == 'automations'} ? 'active'" th:attr="aria-current=${active == 'automations'} ? 'page'">Automações</a>
+            <a th:href="@{/schedules}" th:classappend="${active == 'schedules'} ? 'active'" th:attr="aria-current=${active == 'schedules'} ? 'page'">Agendamentos</a>
+            <details class="extra-navigation" th:open="${active == 'email' or active == 'help' or active == 'history'}">
+                <summary>Mais recursos</summary>
+                <a th:href="@{/history}" th:classappend="${active == 'history'} ? 'active'" th:attr="aria-current=${active == 'history'} ? 'page'">Histórico e rascunhos</a>
+                <a th:href="@{/settings/smtp}" th:classappend="${active == 'email'} ? 'active'" th:attr="aria-current=${active == 'email'} ? 'page'">Meu e-mail</a>
+                <a th:href="@{/help}" th:classappend="${active == 'help'} ? 'active'" th:attr="aria-current=${active == 'help'} ? 'page'">Ajuda e segurança</a>
+            </details>
+        </nav>
+        <form method="post" th:action="@{/logout}" class="logout-form"><button class="text-button" type="submit">Sair da conta</button></form>
+        <p class="local-caption">Uso pessoal · neste computador</p>
+    </details>
+</aside>
+</body>
+</html>
