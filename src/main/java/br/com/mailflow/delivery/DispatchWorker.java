@@ -23,7 +23,7 @@ public class DispatchWorker {
             if(account.isEmpty() || !account.get().isEnabled() || !job.fingerprint().equals(DispatchService.fingerprint(account.get())) || !queue.permitted(job)) {
                 skipped=true;
             } else {
-                outcome=gateway.send(account.get(),new EmailMessage(job.from(),java.util.List.of(job.email()),job.subject(),job.text(),job.html()));
+                outcome=gateway.send(account.get(),new EmailMessage(job.from(),java.util.List.of(job.email()),job.subject(),job.text(),job.html(),"<"+job.id()+"@mailflow.local>"));
                 if(outcome==null) outcome=EmailGateway.Outcome.UNKNOWN;
             }
         } catch(RuntimeException ex) {

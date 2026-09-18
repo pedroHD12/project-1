@@ -4,7 +4,8 @@
 <body class="app-page with-sidebar">
 <aside th:replace="~{fragments/navigation :: sidebar('home')}"></aside>
 <main id="main-content" class="page-container">
-    <div class="page-heading"><div><h1>Seu e-mail, organizado.</h1><p class="subtitle">Prepare, revise e envie suas mensagens no horário certo.</p></div><a class="button primary-link" th:href="@{/messages/new}">Novo envio</a></div>
+    <div class="page-heading"><div><h1>Seu e-mail, organizado.</h1><p class="subtitle">Escreva com calma. Envie no horário certo. Acompanhe a conversa.</p></div><a class="button primary-link" th:href="@{/messages/new}">Escrever mensagem</a></div>
+    <section class="workspace-shortcuts" aria-label="Continue de onde parou"><div><h2>Continue de onde parou</h2><p>Suas mensagens guardadas e as respostas recebidas ficam a um clique.</p></div><div class="row-actions"><a class="button ghost" th:href="@{/drafts}">Abrir rascunhos</a><a class="button ghost" th:href="@{/inbox}">Ver respostas</a></div></section>
     <section class="getting-started" aria-labelledby="setup-title">
         <h2 id="setup-title">Prepare seu primeiro envio</h2>
         <ol class="setup-steps">

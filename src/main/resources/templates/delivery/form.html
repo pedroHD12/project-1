@@ -4,12 +4,15 @@
 <body class="app-page with-sidebar">
 <aside th:replace="~{fragments/navigation :: sidebar('send')}"></aside>
 <main id="main-content" class="page-container narrow delivery-page">
-    <div class="page-heading"><div><h1>Novo envio</h1><p class="subtitle">Prepare a mensagem. Você vai revisar tudo antes de enviar.</p></div></div>
+    <div class="page-heading"><div><h1 th:text="${savedDraftId != null ? 'Editar rascunho' : 'Novo envio'}">Novo envio</h1><p class="subtitle">Escreva no seu ritmo. Guarde para depois ou revise antes de enviar.</p></div><a class="button ghost" th:href="@{/drafts}">Meus rascunhos</a></div>
+    <div class="flash success" role="status" th:if="${success}" th:text="${success}"></div>
+    <p class="hint" th:if="${savedDraftId != null}">Seu rascunho salvo permanece na aba Rascunhos mesmo depois do envio. <a th:href="@{/drafts/{id}/edit(id=${savedDraftId})}">Reabrir versão salva</a></p>
     <div class="flash" th:if="${accounts.isEmpty() or contacts.isEmpty()}"><p>Antes de continuar, <a th:href="@{/settings/smtp/new}">configure seu e-mail</a> e <a th:href="@{/contacts/new}">adicione um contato ativo</a>.</p></div>
     <details class="advanced-options" th:if="${!templates.isEmpty()}"><summary>Começar com um modelo salvo</summary>
         <form method="get" th:action="@{/messages/new}" class="template-loader"><label for="templateId">Modelo de mensagem</label><select id="templateId" name="templateId" required><option value="">Escolha um modelo</option><option th:each="template : ${templates}" th:value="${template.id}" th:text="${template.name}"></option></select><p class="hint">Carregar um modelo substitui os campos desta página. Faça isso antes de escrever.</p><button type="submit" class="button ghost">Carregar modelo</button></form>
     </details>
-    <form method="post" th:action="@{/messages}" th:object="${dispatchForm}" class="delivery-form">
+    <form method="post" th:action="${savedDraftId != null ? '/drafts/' + savedDraftId : '/messages'}" th:object="${dispatchForm}" class="delivery-form">
+        <input th:if="${savedDraftId != null}" type="hidden" name="version" th:value="${draftVersion}">
         <div class="flash error" role="alert" th:if="${#fields.hasAnyErrors()}"><strong>Confira os campos para continuar.</strong><ul><li th:each="error : ${#fields.allErrors()}" th:text="${error}"></li></ul></div>
         <fieldset><legend>1. Quem envia e quem recebe</legend>
             <div class="field"><label for="accountId">Enviar pelo meu e-mail *</label><select id="accountId" th:field="*{accountId}" required th:attr="aria-invalid=${#fields.hasErrors('accountId')}"><option value="">Escolha seu e-mail</option><option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account.defaultSender}"></option></select></div>
@@ -32,6 +35,7 @@
             </div>
             <p class="hint">O computador e o aplicativo precisam estar ligados, com internet. Atrasos maiores que 15 minutos ficam aguardando sua revisão. Limites locais: 12 tentativas por minuto e 200 por dia.</p>
         </fieldset>
-        <div class="form-actions"><a class="button ghost" th:href="@{/history}">Ver meus rascunhos</a><button class="button primary-link" type="submit" th:disabled="${accounts.isEmpty() or contacts.isEmpty()}">Revisar mensagem</button></div>
+        <div class="form-actions composer-actions"><button class="button ghost" type="submit" name="action" value="save" formnovalidate>Salvar rascunho</button><button class="button primary-link" type="submit" name="action" value="review" th:disabled="${accounts.isEmpty() or contacts.isEmpty()}">Revisar mensagem</button></div>
+        <p class="hint">Salvar rascunho não envia e-mail. Você pode completar os campos depois.</p>
     </form>
 </main></body></html>

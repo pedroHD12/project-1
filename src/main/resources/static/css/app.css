@@ -1,17 +1,65 @@
 :root {
     color-scheme: dark;
-    --background: #0a0f1d;
-    --surface: #11182a;
-    --surface-soft: #171f34;
-    --border: #26304a;
+    --background: #0d1421;
+    --surface: #141e2e;
+    --surface-soft: #1c283b;
+    --border: #344158;
     --text: #f3f6ff;
-    --muted: #97a3bd;
-    --accent: #7c8cff;
+    --muted: #adb9ce;
+    --accent: #a5b1ff;
     --accent-soft: rgba(124, 140, 255, 0.13);
     --success: #5de2a2;
 }
 
 .delivery-page { overflow-wrap: anywhere; }
+.row-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.row-actions form { margin: 0; }
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 16px; margin-top: 32px; color: var(--muted); }
+.connection-panel { padding: 28px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
+.connection-panel .delivery-row:last-of-type { border-bottom: 0; }
+.connection-panel h2 { margin-top: 0; }
+.connection-panel .delivery-row { padding: 12px 0; }
+.mailbox-help summary { padding: 8px 0; min-height: 44px; cursor: pointer; color: var(--accent); }
+.reply-list { border-top: 1px solid var(--border); }
+.reply-item { border-bottom: 1px solid var(--border); }
+.reply-item summary { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 8px; cursor: pointer; }
+.reply-item summary span { display: grid; gap: 8px; min-width: 0; }
+.reply-item summary > span:first-child { flex: 1; }
+.reply-item .reply-toggle { color: var(--accent); font-size: 0.875rem; font-weight: 650; white-space: nowrap; }
+.reply-item .reply-close-label, .reply-item[open] .reply-open-label { display: none; }
+.reply-item[open] .reply-close-label { display: block; }
+.reply-item summary:hover { background: var(--surface-soft); }
+.reply-item small, .reply-item time { color: var(--muted); font-size: 0.9rem; }
+.reply-item time { flex-shrink: 0; font-variant-numeric: tabular-nums; }
+.reply-item[open] summary { background: var(--accent-soft); }
+.reply-content { padding: 24px 8px 32px; }
+.workspace-shortcuts { display: flex; align-items: center; justify-content: space-between; gap: 28px; padding: 28px 0; border-block: 1px solid var(--border); }
+.workspace-shortcuts h2 { margin: 0 0 8px; }
+.workspace-shortcuts p { margin: 0; color: var(--muted); line-height: 1.65; }
+.app-sidebar nav { display: grid; gap: 5px; }
+.app-sidebar nav a.active { background: var(--accent-soft); color: var(--accent); font-weight: 650; }
+.app-sidebar .brand { padding: 0 10px; }
+.with-sidebar .page-container { width: min(1120px, calc(100% - 80px)); }
+.with-sidebar .page-container.narrow { width: min(840px, calc(100% - 80px)); }
+.with-sidebar .subtitle { max-width: 68ch; font-size: 1rem; line-height: 1.65; }
+.page-heading > a { flex-shrink: 0; }
+.delivery-page .composer-actions { padding-top: 24px; border-top: 1px solid var(--border); justify-content: flex-end; gap: 12px; }
+.button { transition: background-color 160ms ease-out, border-color 160ms ease-out; }
+.button.ghost:hover { background: var(--surface-soft); border-color: var(--muted); }
+.button.primary-link:hover { background: #bdc5ff; border-color: #bdc5ff; }
+.text-button.danger { background: transparent; border: 0; color: #ffb0c0; padding: 10px; cursor: pointer; }
+.text-button.danger:hover { background: rgba(255, 98, 125, 0.1); }
+.empty-state.compact { padding: 20px 0; }
+@media(max-width:900px) {
+    .with-sidebar .page-container, .with-sidebar .page-container.narrow { width: calc(100% - 40px); }
+    .workspace-shortcuts { align-items: flex-start; flex-direction: column; gap: 20px; }
+}
+@media(max-width:620px) {
+    .connection-panel { padding: 20px; }
+    .reply-item summary { align-items: flex-start; flex-direction: column; gap: 10px; }
+    .page-heading { align-items: flex-start; flex-direction: column; }
+    .delivery-page .composer-actions > button { flex: 1 1 180px; }
+}
 .delivery-page fieldset { border: 0; border-top: 1px solid var(--border); padding: 28px 0; margin: 24px 0 0; min-width: 0; }
 .delivery-page legend { padding: 0 16px 0 0; font-size: 1.2rem; font-weight: 650; }
 .delivery-page .hint { line-height: 1.65; max-width: 72ch; }
@@ -127,7 +175,7 @@ body {
     min-width: 320px;
     background: var(--background);
     color: var(--text);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 button,
@@ -164,8 +212,8 @@ a {
     display: grid;
     place-items: center;
     border-radius: 12px;
-    background: linear-gradient(140deg, #90a0ff, #5366e9);
-    color: white;
+    background: var(--accent);
+    color: var(--background);
     font-weight: 800;
 }
 

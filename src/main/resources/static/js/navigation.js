@@ -48,6 +48,16 @@ document.querySelectorAll("form[data-confirm]").forEach((form) => {
 document.querySelectorAll("form[method='post']").forEach((form) => {
     form.addEventListener("submit", (event) => {
         if (event.defaultPrevented) return;
+        // Preserve the selected action when disabling the submitter during submission.
+        form.querySelectorAll("input[data-submitted-action]").forEach((input) => input.remove());
+        if (event.submitter && event.submitter.name) {
+            const action = document.createElement("input");
+            action.type = "hidden";
+            action.name = event.submitter.name;
+            action.value = event.submitter.value;
+            action.dataset.submittedAction = "true";
+            form.append(action);
+        }
         form.querySelectorAll("button[type='submit']").forEach((button) => {
             button.disabled = true;
             button.dataset.label = button.textContent;

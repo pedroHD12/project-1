@@ -21,8 +21,9 @@ public class DispatchController {
     private final SmtpAccountService accounts;
     private final EmailTemplateService templates;
     private final CurrentWorkspace workspace;
-    public DispatchController(DispatchService dispatch,ContactService contacts,SmtpAccountService accounts,EmailTemplateService templates,CurrentWorkspace workspace) {
-        this.dispatch=dispatch;this.contacts=contacts;this.accounts=accounts;this.templates=templates;this.workspace=workspace;
+    private final br.com.mailflow.draft.SavedDraftService drafts;
+    public DispatchController(DispatchService dispatch,ContactService contacts,SmtpAccountService accounts,EmailTemplateService templates,CurrentWorkspace workspace,br.com.mailflow.draft.SavedDraftService drafts) {
+        this.dispatch=dispatch;this.contacts=contacts;this.accounts=accounts;this.templates=templates;this.workspace=workspace;this.drafts=drafts;
     }
     @InitBinder("dispatchForm")
     void bind(WebDataBinder binder) {
@@ -39,8 +40,12 @@ public class DispatchController {
         model.addAttribute("dispatchForm",form); populate(model,q); return "delivery/form";
     }
     @PostMapping("/messages")
-    String create(@Valid @ModelAttribute("dispatchForm") DispatchForm form,BindingResult errors,Model model) {
-        if(!errors.hasErrors()) try { return "redirect:/messages/"+dispatch.createDraft(form); }
+    String create(@ModelAttribute("dispatchForm") DispatchForm form,BindingResult errors,Model model,@RequestParam(defaultValue="review") String action,RedirectAttributes flash) {
+        if(!errors.hasErrors()) try {
+            if("save".equals(action)) { drafts.create(form); flash.addFlashAttribute("success","Rascunho salvo. Ele fica aqui até você excluí-lo."); return "redirect:/drafts"; }
+            if(!"review".equals(action)) throw new IllegalArgumentException("Escolha salvar ou revisar.");
+            return "redirect:/messages/"+dispatch.createDraft(form);
+        }
         catch(IllegalArgumentException ex) {errors.reject("message",ex.getMessage());}
         populate(model,null);return "delivery/form";
     }

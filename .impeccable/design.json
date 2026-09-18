@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-17T23:10:23Z",
+  "title": "Design System: MailFlow Local",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Fundo Noturno",
+        "tonalRamp": ["oklch(15% 0.0287 262.3)", "oklch(26% 0.0287 262.3)", "oklch(38% 0.0287 262.3)", "oklch(50% 0.0287 262.3)", "oklch(62% 0.0287 262.3)", "oklch(74% 0.0287 262.3)", "oklch(86% 0.0287 262.3)", "oklch(95% 0.0287 262.3)"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Superfície Azul-Escura",
+        "tonalRamp": ["oklch(15% 0.0343 259.5)", "oklch(26% 0.0343 259.5)", "oklch(38% 0.0343 259.5)", "oklch(50% 0.0343 259.5)", "oklch(62% 0.0343 259.5)", "oklch(74% 0.0343 259.5)", "oklch(86% 0.0343 259.5)", "oklch(95% 0.0343 259.5)"]
+      },
+      "surface-soft": {
+        "role": "neutral",
+        "displayName": "Superfície Suave",
+        "tonalRamp": ["oklch(15% 0.0392 259.4)", "oklch(26% 0.0392 259.4)", "oklch(38% 0.0392 259.4)", "oklch(50% 0.0392 259.4)", "oklch(62% 0.0392 259.4)", "oklch(74% 0.0392 259.4)", "oklch(86% 0.0392 259.4)", "oklch(95% 0.0392 259.4)"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Borda Fria",
+        "tonalRamp": ["oklch(15% 0.0433 261.6)", "oklch(26% 0.0433 261.6)", "oklch(38% 0.0433 261.6)", "oklch(50% 0.0433 261.6)", "oklch(62% 0.0433 261.6)", "oklch(74% 0.0433 261.6)", "oklch(86% 0.0433 261.6)", "oklch(95% 0.0433 261.6)"]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Texto Frio",
+        "tonalRamp": ["oklch(15% 0.0124 271.3)", "oklch(26% 0.0124 271.3)", "oklch(38% 0.0124 271.3)", "oklch(50% 0.0124 271.3)", "oklch(62% 0.0124 271.3)", "oklch(74% 0.0124 271.3)", "oklch(86% 0.0124 271.3)", "oklch(95% 0.0124 271.3)"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Texto Atenuado",
+        "tonalRamp": ["oklch(15% 0.0327 261.7)", "oklch(26% 0.0327 261.7)", "oklch(38% 0.0327 261.7)", "oklch(50% 0.0327 261.7)", "oklch(62% 0.0327 261.7)", "oklch(74% 0.0327 261.7)", "oklch(86% 0.0327 261.7)", "oklch(95% 0.0327 261.7)"]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Violeta de Ação",
+        "tonalRamp": ["oklch(15% 0.1121 276.8)", "oklch(26% 0.1121 276.8)", "oklch(38% 0.1121 276.8)", "oklch(50% 0.1121 276.8)", "oklch(62% 0.1121 276.8)", "oklch(74% 0.1121 276.8)", "oklch(86% 0.1121 276.8)", "oklch(95% 0.1121 276.8)"]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "Violeta de Seleção",
+        "tonalRamp": ["oklch(15% 0.1690 275.0 / 0.13)", "oklch(26% 0.1690 275.0 / 0.13)", "oklch(38% 0.1690 275.0 / 0.13)", "oklch(50% 0.1690 275.0 / 0.13)", "oklch(62% 0.1690 275.0 / 0.13)", "oklch(74% 0.1690 275.0 / 0.13)", "oklch(86% 0.1690 275.0 / 0.13)", "oklch(95% 0.1690 275.0 / 0.13)"]
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Verde de Estado",
+        "tonalRamp": ["oklch(15% 0.1492 159.4)", "oklch(26% 0.1492 159.4)", "oklch(38% 0.1492 159.4)", "oklch(50% 0.1492 159.4)", "oklch(62% 0.1492 159.4)", "oklch(74% 0.1492 159.4)", "oklch(86% 0.1492 159.4)", "oklch(95% 0.1492 159.4)"]
+      }
+    },
+    "typographyMeta": {
+      "display": {"displayName": "Título de página", "purpose": "Identifica a tarefa atual sem ocupar o viewport."},
+      "headline": {"displayName": "Título de seção", "purpose": "Divide painéis e etapas do fluxo."},
+      "title": {"displayName": "Título interno", "purpose": "Nomeia cartões, itens e grupos de conteúdo."},
+      "body": {"displayName": "Texto funcional", "purpose": "Instruções, descrições e conteúdo principal."},
+      "label": {"displayName": "Rótulo", "purpose": "Identifica campos e controles com peso forte."}
+    },
+    "shadows": [
+      {"name": "legacy-card-lift", "value": "0 18px 50px rgba(0, 0, 0, 0.16)", "purpose": "Somente módulos antigos do painel; não expandir para novas telas operacionais."},
+      {"name": "local-status-glow", "value": "0 0 14px rgba(93, 226, 162, 0.75)", "purpose": "Somente o ponto de disponibilidade local."}
+    ],
+    "motion": [
+      {"name": "state-color", "value": "160ms ease-out", "purpose": "Transições de cor de fundo e borda em botões; sem animação decorativa."}
+    ],
+    "breakpoints": [
+      {"name": "compact-stack", "value": "620px"},
+      {"name": "single-column", "value": "720px"},
+      {"name": "top-navigation", "value": "900px"}
+    ]
+  },
+  "components": [
+    {
+      "name": "Composer Actions",
+      "kind": "custom",
+      "refersTo": "button-primary",
+      "description": "Par de ações do editor: guardar sem validar tudo e avançar para revisão.",
+      "html": "<div class=\"ds-composer-actions\"><button class=\"ds-button ds-button-ghost\">Salvar rascunho</button><button class=\"ds-button ds-button-primary\">Revisar mensagem</button></div>",
+      "css": ".ds-composer-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; padding-top: 24px; border-top: 1px solid var(--border); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; } .ds-button { min-height: 42px; padding: 10px 16px; border: 1px solid transparent; border-radius: 10px; color: var(--text); background: transparent; font: inherit; cursor: pointer; transition: background-color 160ms ease-out, border-color 160ms ease-out; } .ds-button-ghost { border-color: var(--border); } .ds-button-ghost:hover { background: var(--surface-soft); border-color: var(--muted); } .ds-button-primary { background: var(--accent); border-color: var(--accent); color: var(--background); font-weight: 750; } .ds-button-primary:hover { background: #bdc5ff; border-color: #bdc5ff; } .ds-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Campo operacional de texto com ajuda e foco violeta explícito.",
+      "html": "<label class=\"ds-field\" for=\"ds-subject\"><span class=\"ds-field-label\">Assunto *</span><input class=\"ds-field-input\" id=\"ds-subject\" placeholder=\"Assunto da mensagem\"><small class=\"ds-field-hint\">Use uma descrição clara para reconhecer o envio.</small></label>",
+      "css": ".ds-field { display: grid; gap: 8px; color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; } .ds-field-label { font-weight: 700; } .ds-field-input { width: 100%; padding: 12px 13px; border: 1px solid var(--border); border-radius: 9px; outline: none; background: #0c1221; color: var(--text); font: inherit; caret-color: var(--accent); } .ds-field-input::placeholder { color: #aab5cc; opacity: 1; } .ds-field-input:hover { border-color: var(--muted); } .ds-field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); } .ds-field-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; } .ds-field-hint { color: var(--muted); line-height: 1.65; }"
+    },
+    {
+      "name": "Task Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Navegação de tarefas com estado ativo violeta e recursos secundários separados.",
+      "html": "<nav class=\"ds-navigation\" aria-label=\"Navegação principal\"><a class=\"ds-navigation-link\" href=\"#\">Início</a><a class=\"ds-navigation-link ds-navigation-link-active\" href=\"#\" aria-current=\"page\">Novo envio</a><a class=\"ds-navigation-link\" href=\"#\">Rascunhos</a><div class=\"ds-navigation-extra\"><a class=\"ds-navigation-link\" href=\"#\">Mais recursos</a></div></nav>",
+      "css": ".ds-navigation { width: 250px; display: grid; gap: 5px; padding: 20px; border-right: 1px solid var(--border); background: var(--surface); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; } .ds-navigation-link { display: flex; align-items: center; min-height: 44px; padding: 11px 13px; border-radius: 10px; color: var(--muted); text-decoration: none; line-height: 1.5; } .ds-navigation-link:hover { background: var(--surface-soft); color: var(--text); } .ds-navigation-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; } .ds-navigation-link-active { background: var(--accent-soft); color: var(--accent); font-weight: 650; } .ds-navigation-extra { margin-top: 11px; padding-top: 16px; border-top: 1px solid var(--border); }"
+    },
+    {
+      "name": "Ready Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip-ready",
+      "description": "Estado compacto para itens ativos ou prontos.",
+      "html": "<span class=\"ds-status-chip ds-status-chip-ready\">ATIVO</span>",
+      "css": ".ds-status-chip { display: inline-flex; align-items: center; padding: 5px 8px; border-radius: 999px; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; font-size: 11px; font-weight: 800; } .ds-status-chip-ready { background: rgba(93, 226, 162, 0.13); color: var(--success); }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "content-card",
+      "description": "Cartão funcional plano para modelos e outros itens gerenciáveis.",
+      "html": "<article class=\"ds-content-card\"><div class=\"ds-card-top\"><span class=\"ds-card-status\">ATIVO</span><small class=\"ds-card-meta\">17/09/2026 20:10</small></div><h2 class=\"ds-card-title\">Boas-vindas</h2><p class=\"ds-card-subject\">Uma mensagem curta para novos contatos.</p><a class=\"ds-card-action\" href=\"#\">Editar</a></article>",
+      "css": ".ds-content-card { padding: 22px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif; } .ds-card-top { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); } .ds-card-status { padding: 5px 8px; border-radius: 999px; background: rgba(93, 226, 162, 0.13); color: var(--success); font-size: 11px; font-weight: 800; } .ds-card-meta { color: var(--muted); } .ds-card-title { margin: 26px 0 8px; font-size: 1.35rem; line-height: 1.35; } .ds-card-subject { min-height: 48px; color: var(--muted); line-height: 1.65; } .ds-card-action { display: inline-flex; align-items: center; min-height: 42px; padding: 10px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-soft); color: var(--text); text-decoration: none; } .ds-card-action:hover { border-color: var(--muted); } .ds-card-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Área de Trabalho Local",
+    "overview": "“Área de Trabalho Local” descreve uma interface de uso pessoal, direta e previsível. O tema escuro sustenta sessões de composição, revisão e acompanhamento sem transformar o produto em uma peça promocional; a personalidade aparece na precisão dos estados, na linguagem comum e no uso contido do violeta.\n\nA interface estende o sistema existente em modo Operate. A hierarquia mantém título e ação principal no topo, conteúdo e estados logo abaixo, com densidade moderada, alvos confortáveis e leitura clara em telas pequenas. Novas superfícies devem parecer parte do mesmo aplicativo, não uma identidade paralela.",
+    "keyCharacteristics": [
+      "Operação escura, legível e orientada a tarefas.",
+      "Violeta reservado a ação, seleção e foco.",
+      "Tipografia de sistema com hierarquia curta e direta.",
+      "Superfícies separadas por tom e borda antes de sombra."
+    ],
+    "rules": [
+      {"name": "The Violeta Funcional Rule", "body": "Use o violeta para indicar ação, seleção ou foco; não o espalhe como ornamento.", "section": "colors"},
+      {"name": "The Sistema Primeiro Rule", "body": "Preserve a pilha de sistema; não introduza fonte de marca ou contraste tipográfico ornamental sem uma decisão explícita de redesign.", "section": "typography"},
+      {"name": "The Plano por Padrão Rule", "body": "Novas superfícies operacionais usam contraste tonal e borda; não adicionam sombra, brilho ou gradiente por reflexo.", "section": "elevation"}
+    ],
+    "dos": [
+      "Do preserve o tema escuro, a fonte de sistema e a orientação a tarefas.",
+      "Do reserve o violeta para ação, seleção e foco.",
+      "Do use estados vazios explicativos e ações com verbos claros.",
+      "Do preserve alvos de pelo menos 44px e a reorganização para uma coluna em telas pequenas."
+    ],
+    "donts": [
+      "Don't criar uma identidade paralela, uma metáfora grandiosa ou claims promocionais.",
+      "Don't expandir gradientes, brilhos ou sombras legadas para novas superfícies operacionais.",
+      "Don't usar cor como decoração quando borda, hierarquia e espaçamento resolvem a estrutura.",
+      "Don't ocultar ações críticas ou estados de autorização em controles ambíguos."
+    ]
+  }
+}

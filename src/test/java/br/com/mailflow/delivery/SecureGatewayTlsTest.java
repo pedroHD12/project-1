@@ -61,7 +61,7 @@ class SecureGatewayTlsTest {
             });
             var protector=new SecretProtector(){public String protect(String value){return "synthetic";}public String unprotect(String value){return "synthetic-only";}};
             var account=new SmtpAccount(UUID.randomUUID(),"Synthetic","127.0.0.1",server.getLocalPort(),rejectAuth?"sender@example.test":null,rejectAuth?"synthetic":null,EncryptionMode.TLS,"sender@example.test",true);
-            var outcome=new SecureSmtpGateway(protector).send(account,new EmailMessage("sender@example.test",List.of("recipient@example.test"),"Synthetic subject","Private synthetic text","<p>Private synthetic text</p>"));
+            var outcome=new SecureSmtpGateway(protector).send(account,new EmailMessage("sender@example.test",List.of("recipient@example.test"),"Synthetic subject","Private synthetic text","<p>Private synthetic text</p>","<123e4567-e89b-12d3-a456-426614174000@mailflow.local>"));
             return new Exchange(outcome,result.get(10,TimeUnit.SECONDS));
         }
     }
@@ -69,6 +69,7 @@ class SecureGatewayTlsTest {
         var result=exchange(true,false);
         assertThat(result.outcome()).isEqualTo(EmailGateway.Outcome.ACCEPTED);
         assertThat(result.transcript()).contains("RCPT TO:<recipient@example.test>","Subject: Synthetic subject","Private synthetic text","multipart/");
+        assertThat(result.transcript()).contains("Message-ID: <123e4567-e89b-12d3-a456-426614174000@mailflow.local>");
         assertThat(result.transcript().lines().filter(line->line.startsWith("RCPT TO")).count()).isEqualTo(1);
     }
     @Test void lostAcknowledgementAfterDataIsUnknownNotRetryable() throws Exception {

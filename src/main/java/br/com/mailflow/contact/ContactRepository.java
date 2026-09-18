@@ -20,6 +20,8 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
 
     List<Contact> findTop100ByWorkspaceIdOrderByDisplayNameAscEmailAsc(UUID workspaceId);
 
+    List<Contact> findByWorkspaceIdAndIdIn(UUID workspaceId, List<UUID> ids);
+
     @Query("""
             select c from Contact c
             where c.workspaceId = :workspaceId and (lower(c.email) like lower(concat('%', :query, '%'))

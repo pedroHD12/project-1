@@ -28,6 +28,21 @@ public class ContactService {
     }
 
     @Transactional(readOnly = true)
+    public List<Contact> listForDraft(List<UUID> selectedIds) {
+        var choices = new java.util.LinkedHashMap<UUID, Contact>();
+        for (var contact : list(null)) {
+            if (contact.getStatus() == ContactStatus.ACTIVE) choices.put(contact.getId(), contact);
+        }
+        if (selectedIds != null && !selectedIds.isEmpty()) {
+            var ids = selectedIds.stream().filter(java.util.Objects::nonNull).distinct().limit(20).toList();
+            for (var contact : repository.findByWorkspaceIdAndIdIn(workspace.id(), ids)) {
+                choices.putIfAbsent(contact.getId(), contact);
+            }
+        }
+        return List.copyOf(choices.values());
+    }
+
+    @Transactional(readOnly = true)
     public Contact get(UUID id) {
         return repository.findByIdAndWorkspaceId(id, workspace.id())
                 .orElseThrow(() -> new EntityNotFoundException("Contato não encontrado."));

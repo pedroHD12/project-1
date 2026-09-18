@@ -7,7 +7,10 @@ public record EmailMessage(
         List<String> recipients,
         String subject,
         String textBody,
-        String htmlBody
+        String htmlBody,
+        String messageId
 ) {
+    public EmailMessage(String from,List<String> recipients,String subject,String textBody,String htmlBody) {
+        this(from,recipients,subject,textBody,htmlBody,null);
+    }
 }
-

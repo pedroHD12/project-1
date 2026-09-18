@@ -21,6 +21,7 @@ public class SecureSmtpGateway implements EmailGateway {
                 || !java.util.Objects.equals(email.from(),account.getDefaultSender())) return Outcome.REJECTED;
             DispatchService.address(email.from()); DispatchService.address(email.recipients().getFirst());
             if(email.subject()==null || email.subject().isBlank() || email.subject().length()>998 || email.subject().chars().anyMatch(Character::isISOControl)) return Outcome.REJECTED;
+            if(email.messageId()!=null && !email.messageId().matches("<[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}@mailflow\\.local>")) return Outcome.REJECTED;
             var props=new Properties();
             props.setProperty("mail.smtp.auth",Boolean.toString(account.getUsername()!=null));
             props.setProperty("mail.smtp.starttls.enable",Boolean.toString(account.getEncryptionMode()==EncryptionMode.STARTTLS));
@@ -37,6 +38,7 @@ public class SecureSmtpGateway implements EmailGateway {
             helper.setFrom(email.from()); helper.setTo(email.recipients().getFirst()); helper.setSubject(email.subject());
             if(hasHtml) helper.setText(email.textBody(),email.htmlBody()); else helper.setText(email.textBody());
             message.saveChanges();
+            if(email.messageId()!=null) message.setHeader("Message-ID",email.messageId());
             String secret=account.getUsername()==null || !account.hasProtectedSecret()?null:protector.unprotect(account.getSecretReference());
             transport=session.getTransport("smtp");
             transport.connect(account.getHost(),account.getPort(),account.getUsername(),secret);

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rascunhos · MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"><script defer th:src="@{/js/navigation.js}"></script></head>
+<body class="app-page with-sidebar"><aside th:replace="~{fragments/navigation :: sidebar('drafts')}"></aside>
+<main id="main-content" class="page-container delivery-page">
+    <div class="page-heading"><div><h1>Rascunhos</h1><p class="subtitle">Suas ideias guardadas. Complete e reutilize quando quiser.</p></div><a class="button primary-link" th:href="@{/messages/new}">Escrever mensagem</a></div>
+    <div class="flash success" role="status" th:if="${success}" th:text="${success}"></div>
+    <p class="hint">Eles não expiram e permanecem aqui depois do envio. Só são apagados quando você os exclui.</p>
+    <section th:if="${drafts.isEmpty()}" class="empty-state"><h2>Uma mensagem pode esperar</h2><p>Comece a escrever e clique em Salvar rascunho, mesmo que ainda não tenha escolhido quem recebe.</p><a class="button ghost" th:href="@{/messages/new}">Criar meu primeiro rascunho</a></section>
+    <div class="delivery-history" th:unless="${drafts.isEmpty()}"><article th:each="draft : ${drafts}" class="delivery-row"><div><a class="text-link" th:href="@{/drafts/{id}/edit(id=${draft.id})}" th:text="${draft.title()}"></a><p th:text="${draft.form.bodyText.isBlank() ? 'Continue escrevendo quando quiser.' : #strings.abbreviate(draft.form.bodyText, 140)}"></p><small th:text="${'Salvo em ' + #temporals.format(draft.updatedAt, 'dd/MM/yyyy HH:mm', 'America/Sao_Paulo')}"></small></div><div class="row-actions"><a class="button ghost" th:href="@{/drafts/{id}/edit(id=${draft.id})}">Editar</a><form method="post" th:action="@{/drafts/{id}/delete(id=${draft.id})}" data-confirm="Excluir este rascunho? Essa ação não pode ser desfeita."><button class="text-button danger" type="submit" th:attr="aria-label=${'Excluir rascunho: ' + draft.title()}">Excluir</button></form></div></article></div>
+    <nav class="pagination" aria-label="Páginas dos rascunhos"><a th:if="${page > 0}" th:href="@{/drafts(page=${page-1})}" class="button ghost">Anterior</a><span th:text="${'Página ' + (page+1)}"></span><a th:if="${hasNext}" th:href="@{/drafts(page=${page+1})}" class="button ghost">Próxima</a></nav>
+</main></body></html>

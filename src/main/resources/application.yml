@@ -28,6 +28,10 @@ spring:
       org.quartz.threadPool.threadCount: 3
   thymeleaf:
     cache: false
+  task:
+    scheduling:
+      pool:
+        size: 2 # Reading the inbox must not block the delivery scheduler.
 
 server:
   address: 127.0.0.1
