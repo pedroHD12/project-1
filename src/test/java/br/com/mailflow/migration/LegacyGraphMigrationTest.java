@@ -85,6 +85,7 @@ class LegacyGraphMigrationTest {
             var addedColumns = switch (table) {
                 case "messages" -> " - ARRAY['new_flow','confirmed_at','from_email','account_fingerprint','delivery_mode','occurrence_count','planned_at','delivery_timezone','test_of']";
                 case "message_recipients" -> " - ARRAY['rendered_subject','rendered_text','rendered_html']";
+                case "delivery_jobs" -> " - 'late_delivery'";
                 default -> "";
             };
             try(var rows=sql.executeQuery("select (to_jsonb(t) - 'workspace_id'"+addedColumns+")::text from "+table+" t")) {
