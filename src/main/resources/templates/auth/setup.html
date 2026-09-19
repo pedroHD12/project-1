@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configurar acesso — MailFlow</title><link rel="stylesheet" th:href="@{/css/app.css}"></head>
+<body class="auth-page"><main class="auth-panel">
+<a class="auth-brand" th:href="@{/login}">MailFlow<span>Seu e-mail, no seu tempo.</span></a>
+<h1>Configure seu acesso.</h1><p class="auth-intro">Esta etapa cria a única conta autorizada nesta versão.</p>
+<form th:action="@{/setup}" th:object="${registrationForm}" method="post" class="auth-form">
+<div class="alert error" role="alert" th:if="${#fields.hasAnyErrors()} or ${#fields.globalErrors().size() > 0}"><p th:each="err : ${#fields.allErrors()}" th:text="${err}"></p></div>
+<label for="setupToken">Código de configuração</label><input id="setupToken" name="setupToken" type="password" autocomplete="one-time-code" required>
+<label for="name">Como podemos chamar você?</label><input id="name" th:field="*{name}" maxlength="160" autocomplete="name" required autofocus>
+<label for="email">Seu e-mail autorizado</label><input id="email" th:field="*{email}" type="email" maxlength="320" autocomplete="username" required>
+<label for="password">Crie uma senha</label><input id="password" name="password" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+<label for="confirmPassword">Repita a senha</label><input id="confirmPassword" name="confirmPassword" type="password" minlength="12" maxlength="72" autocomplete="new-password" required>
+<button class="button primary" type="submit">Criar conta exclusiva</button>
+</form>
+</main></body></html>

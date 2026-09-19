@@ -1,6 +1,7 @@
 package br.com.mailflow.security;
 
 import jakarta.validation.Validator;
+import br.com.mailflow.config.AppRuntimeProperties;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,25 @@ public class AccountStore {
     private final Validator validator;
     private final TransactionTemplate transactions;
     private final String dummyHash;
+    private final AppRuntimeProperties runtime;
+    private final OwnerSetupProperties owner;
 
     public AccountStore(JdbcClient jdbc, PasswordEncoder encoder, Validator validator,
-                        PlatformTransactionManager transactionManager) {
+                        PlatformTransactionManager transactionManager, AppRuntimeProperties runtime,
+                        OwnerSetupProperties owner) {
         this.jdbc = jdbc;
         this.encoder = encoder;
         this.validator = validator;
         transactions = new TransactionTemplate(transactionManager);
         dummyHash = encoder.encode(UUID.randomUUID().toString());
+        this.runtime = runtime;
+        this.owner = owner;
     }
     public boolean isRegistrationOpen() {
-        return jdbc.sql("select count(*) from app_users").query(Long.class).single() == 0;
+        return !runtime.isCloud() && jdbc.sql("select count(*) from app_users").query(Long.class).single() == 0;
+    }
+    public boolean isCloudSetupOpen() {
+        return runtime.isCloud() && jdbc.sql("select count(*) from app_users").query(Long.class).single() == 0;
     }
     public boolean register(RegistrationForm form) {
         if (!validator.validate(form).isEmpty()) throw new IllegalArgumentException("Cadastro inválido.");
@@ -39,6 +48,26 @@ public class AccountStore {
             jdbc.sql("select id from workspaces where id = ? for update")
                     .param(INITIAL_WORKSPACE).query(UUID.class).single();
             if (!isRegistrationOpen()) return false;
+            jdbc.sql("""
+                    insert into app_users (id, workspace_id, name, email, normalized_email, password_hash)
+                    values (?, ?, ?, ?, ?, ?)
+                    """).params(UUID.randomUUID(), INITIAL_WORKSPACE, form.getName().strip(),
+                    form.getEmail().strip(), normalize(form.getEmail()), hash).update();
+            return true;
+        }));
+    }
+    public boolean createInitialOwner(RegistrationForm form, char[] setupToken) {
+        if (!runtime.isCloud() || !sameOwnerToken(setupToken) || !normalize(form.getEmail()).equals(owner.email())
+                || !validator.validate(form).isEmpty()) {
+            return false;
+        }
+        var hash = encoder.encode(form.getPassword());
+        return Boolean.TRUE.equals(transactions.execute(status -> {
+            jdbc.sql("select id from workspaces where id = ? for update")
+                    .param(INITIAL_WORKSPACE).query(UUID.class).single();
+            if (!isCloudSetupOpen()) {
+                return false;
+            }
             jdbc.sql("""
                     insert into app_users (id, workspace_id, name, email, normalized_email, password_hash)
                     values (?, ?, ?, ?, ?, ?)
@@ -82,6 +111,18 @@ public class AccountStore {
         });
     }
     private static String normalize(String v) { return v.strip().toLowerCase(Locale.ROOT); }
+    private boolean sameOwnerToken(char[] provided) {
+        if (provided == null || owner.setupToken().isEmpty()) {
+            return false;
+        }
+        var expected = owner.setupToken().getBytes(StandardCharsets.UTF_8);
+        var candidate = new String(provided).getBytes(StandardCharsets.UTF_8);
+        try {
+            return java.security.MessageDigest.isEqual(expected, candidate);
+        } finally {
+            java.util.Arrays.fill(candidate, (byte) 0);
+        }
+    }
     private record LoginRow(UUID id, UUID workspace, String email, String hash, int failures,
                             Timestamp lockedUntil, boolean enabled) { }
 }

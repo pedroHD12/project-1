@@ -19,7 +19,7 @@ public class SecurityConfig {
         http
                 .authenticationProvider(provider)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/css/**", "/js/**", "/login", "/register", "/error").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/login", "/register", "/setup", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/", true).failureUrl("/login?error").permitAll())
@@ -27,8 +27,7 @@ public class SecurityConfig {
                         "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")))
                 .logout(logout -> logout.logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID"));
         if (runtime.isCloud()) {
-            http.requiresChannel(channel -> channel.anyRequest().requiresSecure())
-                    .headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts
+            http.headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts
                             .includeSubDomains(true)
                             .maxAgeInSeconds(31_536_000)));
         }
