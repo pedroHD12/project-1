@@ -2,7 +2,7 @@
 
 Aplicação web pessoal em Java 25, Spring Boot, Thymeleaf e PostgreSQL, acessível somente neste computador Windows.
 
-**Estado: núcleo de uso pessoal implementado.** Cadastro, login, contatos, modelos, conta de envio, rascunhos salvos, revisão, envio imediato, agendamento, repetição diária/semanal, histórico e leitura opcional de respostas do Gmail estão disponíveis. A aplicação é local; não é uma edição SaaS pronta para publicação.
+**Estado: núcleo pessoal implementado.** Cadastro, login, contatos, modelos, conta de envio, rascunhos salvos, revisão, envio imediato, agendamento, repetição diária/semanal, histórico e leitura opcional de respostas do Gmail estão disponíveis. Há também um perfil hospedado, privado e de proprietário único; ele ainda não é uma edição SaaS multiusuário.
 
 ## O que funciona
 
@@ -118,7 +118,7 @@ Em **Início**, siga os links para conectar seu e-mail, adicionar contatos e cri
 4. Clique em **Revisar mensagem**. Confira cada destinatário e a prévia. O teste opcional vai somente ao e-mail do seu login, uma vez por rascunho, sem confirmar o envio original.
 5. Confirme o envio ou agendamento. Acompanhe em **Histórico**, **Agendamentos** ou **Automações**; clique em **Atualizar resultados** para consultar o estado mais recente.
 
-O computador, PostgreSQL e processo Java precisam permanecer ligados. A fila é persistida e consultada a cada cinco segundos. Ao voltar, disparos atrasados mais de 15 minutos exigem **Enviar esta agora**; não existe recuperação automática em massa. Pausar ou cancelar não interrompe uma transmissão já iniciada.
+Na instalação local, o computador, PostgreSQL e processo Java precisam permanecer ligados. A fila é persistida e consultada a cada cinco segundos. Ao voltar, uma tarefa pendente atrasada é enviada uma vez e fica identificada como **Enviado após o horário programado**; resultados incertos nunca são reenviados automaticamente. Pausar ou cancelar não interrompe uma transmissão já iniciada.
 
 **Aceito pelo provedor** não significa entregue na caixa de entrada. Se houver queda durante a transmissão, o resultado fica **incerto**, sem repetição automática: confira os registros do provedor antes de preparar outra mensagem. Falhas de conexão anteriores à transmissão permitem até três tentativas com espera. Uma tentativa em andamento abandonada por mais de cinco minutos também fica incerta.
 
@@ -217,5 +217,6 @@ Evidências anteriores: [fundação segura](docs/SECURE-FOUNDATION-REVIEW.md). O
 - [Plano de respostas e rascunhos](docs/superpowers/plans/2026-09-15-responses-drafts.md)
 - [Desenho das respostas, rascunhos e interface](docs/superpowers/specs/2026-09-15-responses-drafts-design.md)
 - [Fechamento de respostas, rascunhos e interface](docs/RESPONSES-DRAFTS-REVIEW.md)
+- [Implantação privada em Oracle VM + Supabase](docs/DEPLOY-ORACLE-SUPABASE.md)
 - [Desenho e limites do produto](docs/superpowers/specs/2026-09-04-secure-mailflow-evolution-design.md)
 - [Requisitos](docs/REQUISITOS.md)

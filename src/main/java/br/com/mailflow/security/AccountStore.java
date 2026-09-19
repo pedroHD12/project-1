@@ -57,7 +57,7 @@ public class AccountStore {
         }));
     }
     public boolean createInitialOwner(RegistrationForm form, char[] setupToken) {
-        if (!runtime.isCloud() || !sameOwnerToken(setupToken) || !normalize(form.getEmail()).equals(owner.email())
+        if (form == null || !runtime.isCloud() || !sameOwnerToken(setupToken) || !normalize(form.getEmail()).equals(owner.email())
                 || !validator.validate(form).isEmpty()) {
             return false;
         }
@@ -110,9 +110,9 @@ public class AccountStore {
             return new AccountPrincipal(account.id(), account.workspace(), account.email());
         });
     }
-    private static String normalize(String v) { return v.strip().toLowerCase(Locale.ROOT); }
+    private static String normalize(String v) { return v == null ? "" : v.strip().toLowerCase(Locale.ROOT); }
     private boolean sameOwnerToken(char[] provided) {
-        if (provided == null || owner.setupToken().isEmpty()) {
+        if (provided == null || provided.length > 512 || owner.setupToken().isEmpty()) {
             return false;
         }
         var expected = owner.setupToken().getBytes(StandardCharsets.UTF_8);

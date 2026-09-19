@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: ..
+    restart: unless-stopped
+    env_file:
+      - ../.env.cloud
+    environment:
+      SPRING_PROFILES_ACTIVE: cloud
+      APP_RUNTIME_MODE: cloud
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      OWNER_EMAIL: ${OWNER_EMAIL}
+      INITIAL_OWNER_SETUP_TOKEN: ${INITIAL_OWNER_SETUP_TOKEN}
+      MAILFLOW_CREDENTIAL_KEY_V1: ${MAILFLOW_CREDENTIAL_KEY_V1}
+      MAILFLOW_CREDENTIAL_KEY_V0: ${MAILFLOW_CREDENTIAL_KEY_V0:-}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Sao_Paulo}
+    expose:
+      - "8080"
+    networks:
+      - private
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    env_file:
+      - ../.env.cloud
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+    networks:
+      - private
+
+networks:
+  private:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

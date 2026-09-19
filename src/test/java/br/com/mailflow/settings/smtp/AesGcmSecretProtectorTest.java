@@ -45,6 +45,13 @@ class AesGcmSecretProtectorTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
+    @Test
+    void refusesToStartWithoutAnActiveCloudCredentialKey() {
+        assertThatThrownBy(() -> new CredentialKeyRing(null, null))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("MAILFLOW_CREDENTIAL_KEY_V1");
+    }
+
     private static String key(String value) {
         return Base64.getEncoder().encodeToString(value.substring(0, 32).getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }

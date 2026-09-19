@@ -6,7 +6,8 @@ spring:
     cache: true
 
 server:
-  address: 127.0.0.1
+  # The Compose network is private; Caddy is the sole public listener.
+  address: 0.0.0.0
   forward-headers-strategy: native
   servlet:
     session:
@@ -16,3 +17,6 @@ server:
 app:
   runtime:
     mode: cloud
+  owner:
+    email: ${OWNER_EMAIL:}
+    setup-token: ${INITIAL_OWNER_SETUP_TOKEN:}

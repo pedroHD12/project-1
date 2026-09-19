@@ -1,0 +1,15 @@
+.git
+.github
+target
+.env
+.env.*
+!.env.example
+!.env.cloud.example
+data
+backups
+.idea
+.vscode
+*.iml
+*.log
+.local-tools
+.superpowers
