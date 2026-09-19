@@ -10,7 +10,7 @@ public class DispatchQueue {
     private final JdbcClient jdbc;
     public DispatchQueue(JdbcClient jdbc) {this.jdbc=jdbc;}
     public record Work(UUID id,UUID workspaceId,UUID messageId,UUID accountId,String fingerprint,String from,
-                       UUID contactId,boolean selfTest,String email,String subject,String text,String html,int attempt,UUID claimToken) {}
+                       UUID contactId,boolean selfTest,String email,String subject,String text,String html,int attempt,UUID claimToken,boolean late) {}
 
     @Transactional
     public void recoverInterrupted() {
@@ -43,13 +43,9 @@ public class DispatchQueue {
             where m.new_flow and m.confirmed_at is not null and m.status='QUEUED'
                 and j.status in ('PENDING','RETRY') and j.available_at<=current_timestamp
             order by j.available_at,j.id limit 1 for update of m skip locked
-            """).query((rs,n)->new Candidate(new Work(rs.getObject("id",UUID.class),rs.getObject("workspace_id",UUID.class),rs.getObject("message_id",UUID.class),rs.getObject("smtp_account_id",UUID.class),rs.getString("account_fingerprint"),rs.getString("from_email"),rs.getObject("contact_id",UUID.class),rs.getObject("test_of")!=null,rs.getString("email"),rs.getString("rendered_subject"),rs.getString("rendered_text"),rs.getString("rendered_html"),rs.getInt("attempt_count")+1,UUID.randomUUID()),rs.getBoolean("missed"))).optional();
+            """).query((rs,n)->new Work(rs.getObject("id",UUID.class),rs.getObject("workspace_id",UUID.class),rs.getObject("message_id",UUID.class),rs.getObject("smtp_account_id",UUID.class),rs.getString("account_fingerprint"),rs.getString("from_email"),rs.getObject("contact_id",UUID.class),rs.getObject("test_of")!=null,rs.getString("email"),rs.getString("rendered_subject"),rs.getString("rendered_text"),rs.getString("rendered_html"),rs.getInt("attempt_count")+1,UUID.randomUUID(),rs.getBoolean("missed"))).optional();
         if(candidate.isEmpty()) return Optional.empty();
-        var c=candidate.get(); var work=c.work();
-        if(c.missed()) {
-            jdbc.sql("update delivery_jobs set status='MISSED',last_error_code='MISSED_TIME',updated_at=current_timestamp where id=? and workspace_id=? and status in ('PENDING','RETRY')").params(work.id(),work.workspaceId()).update();
-            return Optional.empty();
-        }
+        var work=candidate.get();
         int changed=jdbc.sql("""
             update delivery_jobs set status='PROCESSING',attempt_count=attempt_count+1,locked_by=?,locked_at=current_timestamp,updated_at=current_timestamp
             where id=? and workspace_id=? and status in ('PENDING','RETRY') and attempt_count<max_attempts
@@ -59,8 +55,6 @@ public class DispatchQueue {
             .params(UUID.randomUUID(),work.workspaceId(),work.id(),work.attempt()).update();
         return Optional.of(work);
     }
-    private record Candidate(Work work,boolean missed) {}
-
     @Transactional
     public boolean permitted(Work work) {
         var state=jdbc.sql("select status from messages where id=? and workspace_id=? and confirmed_at is not null and new_flow for update")
@@ -96,7 +90,7 @@ public class DispatchQueue {
         // Parent-first locking matches pause/cancel/claim; network I/O is never inside this transaction.
         jdbc.sql("select id from messages where id=? and workspace_id=? for update").params(work.messageId(),work.workspaceId()).query(UUID.class).single();
         String state=skipped?"SKIPPED":switch(outcome) {
-            case ACCEPTED -> "SENT"; case UNKNOWN -> "UNKNOWN";
+            case ACCEPTED -> work.late()?"SENT_LATE":"SENT"; case UNKNOWN -> "UNKNOWN";
             case REJECTED -> "FAILED"; case RETRYABLE -> work.attempt()<3?"RETRY":"FAILED";
         };
         String attemptOutcome=skipped?"PERMANENT_ERROR":switch(outcome) {

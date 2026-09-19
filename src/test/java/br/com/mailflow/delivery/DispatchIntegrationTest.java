@@ -133,15 +133,14 @@ class DispatchIntegrationTest {
         contacts.changeStatus(contact.getId(),ContactStatus.UNSUBSCRIBED); worker.processOne();
         assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("SKIPPED"); verifyNoInteractions(gateway);
     }
-    @Test void lateJobNeedsReviewAndStaleInFlightJobBecomesUncertain() {
+    @Test void lateJobIsDeliveredOnceAndMarkedAsLate() {
         var id=dispatch.createDraft(form()); dispatch.confirm(id);
+        when(gateway.send(any(),any())).thenReturn(EmailGateway.Outcome.ACCEPTED);
         jdbc.sql("update delivery_jobs set available_at=current_timestamp - interval '1 hour'").update();
-        worker.processOne(); assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("MISSED");
-        dispatch.release(id,dispatch.get(id).jobs().getFirst().id());
-        assertThat(queue.claim()).isPresent();
-        jdbc.sql("update delivery_jobs set locked_at=current_timestamp - interval '10 minutes' where status='PROCESSING'").update();
+        worker.processOne(); assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("SENT_LATE");
+        verify(gateway, times(1)).send(any(), any());
         worker.processOne();
-        assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("UNKNOWN"); verifyNoInteractions(gateway);
+        assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("SENT_LATE");
     }
     @Test void concurrentWorkersClaimSameJobOnlyOnce() throws Exception {
         var id=dispatch.createDraft(form()); dispatch.confirm(id);

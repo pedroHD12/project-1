@@ -47,6 +47,7 @@ public class DispatchService {
         return switch(status) {
             case "DRAFT" -> "Rascunho"; case "QUEUED","PENDING" -> "Aguardando";
             case "PROCESSING" -> "Enviando"; case "SENT" -> "Aceito pelo provedor";
+            case "SENT_LATE" -> "Enviado após o horário programado";
             case "RETRY" -> "Nova tentativa programada"; case "FAILED" -> "Não enviado";
             case "UNKNOWN" -> "Resultado incerto — confira sua caixa de e-mail";
             case "MISSED" -> "Horário perdido — precisa de revisão"; case "SKIPPED" -> "Não enviado por segurança";
@@ -120,7 +121,7 @@ public class DispatchService {
         String filter=switch(kind) {case "schedules" -> " and m.delivery_mode<>'NOW'"; case "automations" -> " and m.delivery_mode in ('DAILY','WEEKLY')"; default -> "";};
         return jdbc.sql("""
             select m.id,m.subject,m.status,m.delivery_mode,m.created_at,count(j.id) total,
-            count(j.id) filter(where j.status='SENT') sent,
+            count(j.id) filter(where j.status in ('SENT','SENT_LATE')) sent,
             count(j.id) filter(where j.status in ('UNKNOWN','FAILED','MISSED','SKIPPED')) attention
             from messages m left join message_recipients r on r.message_id=m.id and r.workspace_id=m.workspace_id
             left join delivery_jobs j on j.message_recipient_id=r.id and j.workspace_id=r.workspace_id
