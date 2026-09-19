@@ -62,4 +62,7 @@ logging:
     org.hibernate.orm.jdbc.error: "OFF"
 
 app:
+  runtime:
+    mode: ${APP_RUNTIME_MODE:local}
+    database-url: ${DB_URL:jdbc:postgresql://localhost:5432/mailflow}
   timezone: ${APP_TIMEZONE:America/Sao_Paulo}

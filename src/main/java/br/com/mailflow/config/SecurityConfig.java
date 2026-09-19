@@ -14,7 +14,8 @@ public class SecurityConfig {
 
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, AccountAuthenticationProvider provider) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, AccountAuthenticationProvider provider,
+                                            AppRuntimeProperties runtime) throws Exception {
         http
                 .authenticationProvider(provider)
                 .authorizeHttpRequests(authorize -> authorize
@@ -25,6 +26,12 @@ public class SecurityConfig {
                 .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives(
                         "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'")))
                 .logout(logout -> logout.logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID"));
+        if (runtime.isCloud()) {
+            http.requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                    .headers(headers -> headers.httpStrictTransportSecurity(hsts -> hsts
+                            .includeSubDomains(true)
+                            .maxAgeInSeconds(31_536_000)));
+        }
         return http.build();
     }
 

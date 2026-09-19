@@ -1,0 +1,18 @@
+spring:
+  config:
+    activate:
+      on-profile: cloud
+  thymeleaf:
+    cache: true
+
+server:
+  address: 127.0.0.1
+  forward-headers-strategy: native
+  servlet:
+    session:
+      cookie:
+        secure: true
+
+app:
+  runtime:
+    mode: cloud
