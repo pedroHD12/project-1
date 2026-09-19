@@ -218,5 +218,6 @@ Evidências anteriores: [fundação segura](docs/SECURE-FOUNDATION-REVIEW.md). O
 - [Desenho das respostas, rascunhos e interface](docs/superpowers/specs/2026-09-15-responses-drafts-design.md)
 - [Fechamento de respostas, rascunhos e interface](docs/RESPONSES-DRAFTS-REVIEW.md)
 - [Implantação privada em Oracle VM + Supabase](docs/DEPLOY-ORACLE-SUPABASE.md)
+- [Checklist de publicação privada](docs/HOSTED-RELEASE-CHECKLIST.md)
 - [Desenho e limites do produto](docs/superpowers/specs/2026-09-04-secure-mailflow-evolution-design.md)
 - [Requisitos](docs/REQUISITOS.md)
