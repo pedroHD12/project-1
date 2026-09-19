@@ -1,12 +1,14 @@
 package br.com.mailflow.settings.smtp;
 
 import com.sun.jna.platform.win32.Crypt32Util;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @Component
+@Profile("!cloud")
 public class WindowsDpapiSecretProtector implements SecretProtector {
 
     private static final String PREFIX = "dpapi:";

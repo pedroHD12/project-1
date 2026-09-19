@@ -108,13 +108,18 @@ public class SmtpAccountService {
         return account;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public String revealSecret(SmtpAccount account) {
         account = get(account.getId());
         if (!account.hasProtectedSecret()) {
             return null;
         }
-        return secretProtector.unprotect(account.getSecretReference());
+        var protectedSecret = account.getSecretReference();
+        var secret = secretProtector.unprotect(protectedSecret);
+        if (secretProtector.requiresReprotect(protectedSecret)) {
+            account.changeSecret(secretProtector.protect(secret));
+        }
+        return secret;
     }
 
     private String protectWhenPresent(String password) {

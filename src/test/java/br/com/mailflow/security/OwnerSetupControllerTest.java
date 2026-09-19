@@ -20,7 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "app.runtime.database-url=jdbc:postgresql://db.example.test/mailflow?sslmode=verify-full",
         "app.owner.email=owner@example.test",
-        "app.owner.setup-token=initial-owner-token"
+        "app.owner.setup-token=initial-owner-token",
+        "app.credentials.key-v1=QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUE="
 })
 @AutoConfigureMockMvc
 @ActiveProfiles("cloud")

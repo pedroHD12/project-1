@@ -65,4 +65,7 @@ app:
   runtime:
     mode: ${APP_RUNTIME_MODE:local}
     database-url: ${DB_URL:jdbc:postgresql://localhost:5432/mailflow}
+  credentials:
+    key-v1: ${MAILFLOW_CREDENTIAL_KEY_V1:}
+    key-v0: ${MAILFLOW_CREDENTIAL_KEY_V0:}
   timezone: ${APP_TIMEZONE:America/Sao_Paulo}

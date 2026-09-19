@@ -64,4 +64,19 @@ class SmtpAccountServiceTest {
         service.update(id, form);
         assertThat(account.hasProtectedSecret()).isFalse();
     }
+
+    @Test
+    void reprotectsAnOldCloudCredentialAfterItIsRead() {
+        var id = java.util.UUID.randomUUID();
+        var account = new SmtpAccount(br.com.mailflow.security.AccountStore.INITIAL_WORKSPACE,
+                "Pessoal", "smtp.example.test", 587, "owner@example.test", "aesgcm:v0:old", EncryptionMode.STARTTLS, "owner@example.test", true);
+        when(repository.findByIdAndWorkspaceId(org.mockito.ArgumentMatchers.isNull(), org.mockito.ArgumentMatchers.eq(br.com.mailflow.security.AccountStore.INITIAL_WORKSPACE)))
+                .thenReturn(java.util.Optional.of(account));
+        when(secretProtector.unprotect("aesgcm:v0:old")).thenReturn("application-password");
+        when(secretProtector.requiresReprotect("aesgcm:v0:old")).thenReturn(true);
+        when(secretProtector.protect("application-password")).thenReturn("aesgcm:v1:new");
+
+        assertThat(service.revealSecret(account)).isEqualTo("application-password");
+        assertThat(account.getSecretReference()).isEqualTo("aesgcm:v1:new");
+    }
 }
