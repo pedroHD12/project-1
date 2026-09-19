@@ -142,6 +142,19 @@ class DispatchIntegrationTest {
         worker.processOne();
         assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("SENT_LATE");
     }
+
+    @Test void retryOfAnOverdueJobRemainsMarkedLateAfterItSucceeds() {
+        var id=dispatch.createDraft(form()); dispatch.confirm(id);
+        jdbc.sql("update delivery_jobs set available_at=current_timestamp - interval '1 hour'").update();
+        when(gateway.send(any(),any())).thenReturn(EmailGateway.Outcome.RETRYABLE, EmailGateway.Outcome.ACCEPTED);
+
+        worker.processOne();
+        jdbc.sql("update delivery_jobs set available_at=current_timestamp where status='RETRY'").update();
+        worker.processOne();
+
+        assertThat(dispatch.get(id).jobs().getFirst().status()).isEqualTo("SENT_LATE");
+        verify(gateway, times(2)).send(any(), any());
+    }
     @Test void concurrentWorkersClaimSameJobOnlyOnce() throws Exception {
         var id=dispatch.createDraft(form()); dispatch.confirm(id);
         try(var executor=Executors.newFixedThreadPool(4)) {

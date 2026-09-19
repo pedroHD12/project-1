@@ -37,19 +37,19 @@ public class DispatchQueue {
         var candidate=jdbc.sql("""
             select j.id,j.workspace_id,m.id message_id,m.smtp_account_id,m.account_fingerprint,m.from_email,
                 r.contact_id,m.test_of,r.email,r.rendered_subject,r.rendered_text,r.rendered_html,j.attempt_count,
-                j.available_at < current_timestamp - interval '15 minutes' missed
+                (j.late_delivery or j.available_at < current_timestamp - interval '15 minutes') late
             from delivery_jobs j join message_recipients r on r.id=j.message_recipient_id and r.workspace_id=j.workspace_id
             join messages m on m.id=r.message_id and m.workspace_id=r.workspace_id
             where m.new_flow and m.confirmed_at is not null and m.status='QUEUED'
                 and j.status in ('PENDING','RETRY') and j.available_at<=current_timestamp
             order by j.available_at,j.id limit 1 for update of m skip locked
-            """).query((rs,n)->new Work(rs.getObject("id",UUID.class),rs.getObject("workspace_id",UUID.class),rs.getObject("message_id",UUID.class),rs.getObject("smtp_account_id",UUID.class),rs.getString("account_fingerprint"),rs.getString("from_email"),rs.getObject("contact_id",UUID.class),rs.getObject("test_of")!=null,rs.getString("email"),rs.getString("rendered_subject"),rs.getString("rendered_text"),rs.getString("rendered_html"),rs.getInt("attempt_count")+1,UUID.randomUUID(),rs.getBoolean("missed"))).optional();
+            """).query((rs,n)->new Work(rs.getObject("id",UUID.class),rs.getObject("workspace_id",UUID.class),rs.getObject("message_id",UUID.class),rs.getObject("smtp_account_id",UUID.class),rs.getString("account_fingerprint"),rs.getString("from_email"),rs.getObject("contact_id",UUID.class),rs.getObject("test_of")!=null,rs.getString("email"),rs.getString("rendered_subject"),rs.getString("rendered_text"),rs.getString("rendered_html"),rs.getInt("attempt_count")+1,UUID.randomUUID(),rs.getBoolean("late"))).optional();
         if(candidate.isEmpty()) return Optional.empty();
         var work=candidate.get();
         int changed=jdbc.sql("""
-            update delivery_jobs set status='PROCESSING',attempt_count=attempt_count+1,locked_by=?,locked_at=current_timestamp,updated_at=current_timestamp
+            update delivery_jobs set status='PROCESSING',attempt_count=attempt_count+1,late_delivery=late_delivery or ?,locked_by=?,locked_at=current_timestamp,updated_at=current_timestamp
             where id=? and workspace_id=? and status in ('PENDING','RETRY') and attempt_count<max_attempts
-            """).params(work.claimToken().toString(),work.id(),work.workspaceId()).update();
+            """).params(work.late(),work.claimToken().toString(),work.id(),work.workspaceId()).update();
         if(changed!=1) return Optional.empty();
         jdbc.sql("insert into delivery_attempts(id,workspace_id,delivery_job_id,attempt_number,started_at,outcome) values (?,?,?,?,current_timestamp,'PROCESSING')")
             .params(UUID.randomUUID(),work.workspaceId(),work.id(),work.attempt()).update();

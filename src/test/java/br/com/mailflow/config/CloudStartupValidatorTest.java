@@ -29,4 +29,22 @@ class CloudStartupValidatorTest {
 
         assertThatCode(() -> CloudStartupValidator.validate(runtime)).doesNotThrowAnyException();
     }
+
+    @Test
+    void cloudRejectsConflictingTlsModeParameters() {
+        var runtime = new AppRuntimeProperties("cloud", "jdbc:postgresql://db.example.com/mailflow?sslmode=verify-full&sslmode=disable");
+
+        assertThatThrownBy(() -> CloudStartupValidator.validate(runtime))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("verificação TLS");
+    }
+
+    @Test
+    void cloudProfileAndRuntimeModeMustAgree() {
+        var runtime = new AppRuntimeProperties("local", "jdbc:postgresql://db.example.com/mailflow?sslmode=verify-full");
+
+        assertThatThrownBy(() -> CloudStartupValidator.validateProfileMode(runtime, true))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("APP_RUNTIME_MODE");
+    }
 }
