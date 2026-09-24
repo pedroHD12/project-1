@@ -17,8 +17,17 @@ class CloudStartupValidatorTest {
     }
 
     @Test
-    void cloudAcceptsDatabaseUrlWithFullCertificateVerification() {
+    void cloudRejectsDatabaseUrlWithoutRootCertificate() {
         var runtime = new AppRuntimeProperties("cloud", "jdbc:postgresql://db.example.com:5432/mailflow?sslmode=verify-full");
+
+        assertThatThrownBy(() -> CloudStartupValidator.validate(runtime))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("certificado raiz");
+    }
+
+    @Test
+    void cloudAcceptsDatabaseUrlWithFullCertificateVerificationAndRootCertificate() {
+        var runtime = new AppRuntimeProperties("cloud", "jdbc:postgresql://db.example.com:5432/mailflow?sslmode=verify-full&sslrootcert=/home/mailflow/.postgresql/root.crt");
 
         assertThatCode(() -> CloudStartupValidator.validate(runtime)).doesNotThrowAnyException();
     }

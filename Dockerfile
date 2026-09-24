@@ -9,8 +9,10 @@ FROM eclipse-temurin:25-jre
 RUN useradd --system --create-home --uid 10001 mailflow
 WORKDIR /app
 COPY --from=build /workspace/target/mailflow-local-0.1.0-SNAPSHOT.jar app.jar
+COPY deploy/entrypoint.sh entrypoint.sh
+RUN chmod 500 entrypoint.sh
 USER mailflow
 ENV SPRING_PROFILES_ACTIVE=cloud \
     APP_PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["/app/entrypoint.sh"]

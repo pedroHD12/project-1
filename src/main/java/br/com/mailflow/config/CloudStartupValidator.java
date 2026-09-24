@@ -38,6 +38,14 @@ public class CloudStartupValidator implements SmartInitializingSingleton {
         if (sslModes.size() != 1 || !"verify-full".equals(sslModes.getFirst())) {
             throw new IllegalStateException("Cloud exige PostgreSQL com verificação TLS (sslmode=verify-full).");
         }
+        var rootCertificates = Arrays.stream(databaseUrl.substring(queryAt + 1).split("&"))
+                .map(part -> part.split("=", 2))
+                .filter(pair -> pair.length == 2 && "sslrootcert".equalsIgnoreCase(pair[0]))
+                .map(pair -> pair[1])
+                .toList();
+        if (rootCertificates.size() != 1 || rootCertificates.getFirst().isBlank()) {
+            throw new IllegalStateException("Cloud exige o certificado raiz PostgreSQL (sslrootcert).");
+        }
     }
 
     static void validateProfileMode(AppRuntimeProperties runtime, boolean cloudProfileActive) {
